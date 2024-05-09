@@ -228,11 +228,15 @@ void ServoFunctions::smoothMove(const int servoNumber, const int angle, const in
 
 }
 
+//Performs a smooth move from existing position to newPulse with speed. 
+//On completion it will reset the task on this thread so that the thread is restarted and all smoothmoves written on it will be done again in task order.
 void ServoFunctions::rsmoothMove_pulse(const int servoNumber, const int newPulse, const int speed, const int thread, const int task)
 {
     if(smoothMove_pulse(servoNumber, newPulse,speed,thread,task)) resetTasks(thread);
 }
 
+
+//Performs a smooth move from existing position to newPulse with speed.
 bool ServoFunctions::smoothMove_pulse(const int servoNumber, const int newPulse, const int speed, const int thread, const int task)
 {
     if((cycleClock%speed)==0)
