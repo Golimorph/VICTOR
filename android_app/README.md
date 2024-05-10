@@ -1,0 +1,1 @@
+Android app for controlling victor from phone or tablet. This folder contains an android studio project. Please open with android studio. 
