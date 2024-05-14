@@ -51,26 +51,35 @@ void loop()
   //sf.moveUSInCircle(5);
   //vp.obstacleAvoidDrive_0(USdistance);
    
-   int speed = 10;
+   //int speed = 10;
 
-   sf.smoothMove_pulse(CLAWSERVO, CLAWSERVO_MAX, speed,3,1);
-   sf.rsmoothMove_pulse(CLAWSERVO, CLAWSERVO_MIN+40, speed,3,2);
-   
-   sf.smoothMove_pulse(ROTSERVO, ROTSERVO_MAX, speed,4,1);
-   sf.rsmoothMove_pulse(ROTSERVO, ROTSERVO_MIN, speed,4,2);
-   
-   sf.smoothMove_pulse(SHOULDERSERVORIGHT, SHOULDERSERVORIGHT_MID, speed,5,1);
-   sf.rsmoothMove_pulse(SHOULDERSERVORIGHT, SHOULDERSERVORIGHT_MIN, speed,5,2);
-   
-   sf.smoothMove_pulse(ELBOWSERVO, ELBOWSERVO_MIN, speed,6,1);
-   sf.rsmoothMove_pulse(ELBOWSERVO, ELBOWSERVO_MAX, speed,6,2);
+//   sf.smoothMove_pulse(CLAWSERVO, CLAWSERVO_MAX, speed,3,1);
+//   sf.rsmoothMove_pulse(CLAWSERVO, CLAWSERVO_MIN+40, speed,3,2);
+//   
+//   sf.smoothMove_pulse(ROTSERVO, ROTSERVO_MAX, speed,4,1);
+//   sf.rsmoothMove_pulse(ROTSERVO, ROTSERVO_MIN, speed,4,2);
+//   
+//   sf.smoothMove_pulse(SHOULDERSERVORIGHT, SHOULDERSERVORIGHT_MID, speed,5,1);
+//   sf.rsmoothMove_pulse(SHOULDERSERVORIGHT, SHOULDERSERVORIGHT_MIN, speed,5,2);
+//   
+//   sf.smoothMove_pulse(ELBOWSERVO, ELBOWSERVO_MIN, speed,6,1);
+//   sf.rsmoothMove_pulse(ELBOWSERVO, ELBOWSERVO_MAX, speed,6,2);
+//  
+//   sf.smoothMove_pulse(WRISTUPSERVO, WRISTUPSERVO_MIN, speed,7,1);
+//   sf.rsmoothMove_pulse(WRISTUPSERVO, WRISTUPSERVO_MAX, speed,7,2);
   
-   sf.smoothMove_pulse(WRISTUPSERVO, WRISTUPSERVO_MIN, speed,7,1);
-   sf.rsmoothMove_pulse(WRISTUPSERVO, WRISTUPSERVO_MAX, speed,7,2);
-  
    
+  if (USdistance == 49)
+  {
+    MOTOR_GO_FORWARD;
+  } 
+  if (USdistance == 50)
+  {
+    MOTOR_GO_STOP;
+  }
 
-  Serial.println(USdistance);
+
+  //Serial.println(USdistance);
  }
 
 
