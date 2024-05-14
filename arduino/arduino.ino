@@ -68,15 +68,28 @@ void loop()
 //   sf.smoothMove_pulse(WRISTUPSERVO, WRISTUPSERVO_MIN, speed,7,1);
 //   sf.rsmoothMove_pulse(WRISTUPSERVO, WRISTUPSERVO_MAX, speed,7,2);
   
-   
+  
+  if (USdistance == 48)
+  {
+    MOTOR_GO_STOP;
+  } 
   if (USdistance == 49)
   {
     MOTOR_GO_FORWARD;
-  } 
+  }
   if (USdistance == 50)
   {
-    MOTOR_GO_STOP;
+    MOTOR_GO_BACK;
   }
+  if (USdistance == 51)
+  {
+    MOTOR_GO_LEFT;
+  }
+  if (USdistance == 52)
+  {
+    MOTOR_GO_RIGHT;
+  } 
+  
 
 
   //Serial.println(USdistance);
