@@ -30,16 +30,20 @@ def main(stdscr):
         # Get user input
         key = stdscr.getch()
         if key != curses.ERR:
-            if key == curses.KEY_UP:
+            if key == ord('a') or key == ord('A'):
+                 stdin, stdout, stderr = ssh_client.exec_command("/home/victor/Repository/main 0")
+            elif key == curses.KEY_UP:
                 stdin, stdout, stderr = ssh_client.exec_command("/home/victor/Repository/main 1")
-                lastPress_time = time.time()
             elif key == curses.KEY_DOWN:
                 stdin, stdout, stderr = ssh_client.exec_command("/home/victor/Repository/main 2")
-                lastPress_time = time.time()
-        if time.time() - lastPress_time > 0.1:
-            stdin, stdout, stderr = ssh_client.exec_command("/home/victor/Repository/main 2")
+            elif key == curses.KEY_LEFT:
+                stdin, stdout, stderr = ssh_client.exec_command("/home/victor/Repository/main 3")
+            elif key == curses.KEY_RIGHT:
+                stdin, stdout, stderr = ssh_client.exec_command("/home/victor/Repository/main 4")
+        #if time.time() - lastPress_time > 0.4:
+        #    stdin, stdout, stderr = ssh_client.exec_command("/home/victor/Repository/main 0")
         # Delay for a short period to reduce CPU usage
-        time.sleep(0.2)
+        time.sleep(0.01)
 
 # Run the program
 curses.wrapper(main)
