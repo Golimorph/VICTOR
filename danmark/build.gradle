@@ -1,0 +1,6 @@
+plugins {
+    id 'java'
+}
+dependencies {
+    implementation 'org.jline:jline:3.21.0'
+}

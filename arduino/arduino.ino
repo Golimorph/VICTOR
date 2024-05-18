@@ -41,6 +41,9 @@ delay(1000);
 
 
 
+int speed = 0;
+bool goBack = false;
+
 
 int backCounter=0;
 void loop() 
@@ -71,6 +74,7 @@ void loop()
   
   if (USdistance == 48)
   {
+    speed = 0;
     MOTOR_GO_STOP;
   } 
   if (USdistance == 49)
@@ -89,7 +93,34 @@ void loop()
   {
     MOTOR_GO_RIGHT;
   } 
-  
+
+  if (USdistance == 53)
+  {
+    if(sf.cycleClock%1000 == 0)
+    {
+      if(goBack)
+      {
+        speed--;
+        if(abs(speed)<100)
+        {
+          sf.setMotorSpeed(speed, speed);
+        }else
+        {
+          goBack = !goBack;
+        }
+      }else
+      {
+        speed++;
+        if(abs(speed)<100)
+        {
+          sf.setMotorSpeed(speed, speed);
+        }else
+        {
+          goBack = !goBack;
+        }
+      }
+    }
+  }
 
 
   //Serial.println(USdistance);

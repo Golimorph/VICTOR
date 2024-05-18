@@ -305,6 +305,29 @@ bool ServoFunctions::sleep(const long int cycles, const int thread, const int ta
     return false;
 }
 
+void ServoFunctions::setMotorSpeed(int speedA, int speedB)
+{
+    //This set the direction of the motor forward or backward. A negative speed means to go backward
+    if(speedA >= 0)
+    {
+        digitalWrite(DIRA,HIGH);
+    }else
+    {
+        digitalWrite(DIRA,LOW);
+    }
+    analogWrite(PWMA, abs(speedA));
+
+    //This set the direction of the motor forward or backward. A negative speed means to go backward
+    if(speedB >= 0)
+    {
+        digitalWrite(DIRB,LOW);
+    }else{
+        digitalWrite(DIRB,HIGH);
+    }
+    analogWrite(PWMB, abs(speedA));
+}
+
+
 /*
 void ServoFunctions::moveUSLeftRight(int speed)
 {

@@ -33,7 +33,6 @@
 #define outputMotorHallLeftB 13
 
 
-
 #define MOTOR_GO_FORWARD  {digitalWrite(DIRA,HIGH);analogWrite(PWMA,100);digitalWrite(DIRB,LOW);analogWrite(PWMB,100);} //车体前进
 #define MOTOR_GO_BACK   {digitalWrite(DIRA,LOW);analogWrite(PWMA,100);digitalWrite(DIRB,HIGH);analogWrite(PWMB,100);}   //车体后退
 #define MOTOR_GO_LEFT   {digitalWrite(DIRA,LOW);analogWrite(PWMA,100);digitalWrite(DIRB,LOW);analogWrite(PWMB,100);}  //车体左转
@@ -127,6 +126,8 @@ public:
     int getPWM(int servoNumber);
     int obstacleAvoidDrive(struct pt* pt);
     void resetTasks(int thread);
+
+    void setMotorSpeed(int speedA, int speedB);
     
     unsigned long long int cycleClock;
 private:
