@@ -4,7 +4,7 @@ victorWithArduino:
 	rsync -r arduino victor@raspberrypi.local:/home/victor/Arduino
 	rsync -r raspberry/* victor@raspberrypi.local:/home/victor/Repository
 	#build raspberry program
-	ssh victor@raspberrypi.local 'g++ -o Repository/server Repository/server.cpp'
+	ssh victor@raspberrypi.local 'g++ -o Repository/server Repository/server.cpp -lwiringPi'
 	#build arduino
 	ssh victor@raspberrypi.local '/home/victor/Arduino/arduino-cli compile --fqbn arduino:avr:uno /home/victor/Arduino/arduino --library /home/victor/Arduino/arduino/lib/Arduino_AVRSTL --library /home/victor/Arduino/arduino/lib/Adafruit_PWMServoDriver --library /home/victor/Arduino/arduino/lib/ServoFunctions --library /home/victor/Arduino/arduino/lib/Ultrasonic --library /home/victor/Arduino/arduino/lib/victorPrograms'
 	ssh victor@raspberrypi.local '/home/victor/Arduino/arduino-cli upload -p /dev/ttyUSB0 --fqbn arduino:avr:uno /home/victor/Arduino/arduino'
@@ -12,7 +12,7 @@ victorWithArduino:
 #copy and upload C++ code to raspberrypi and arduino on victor
 victor:
 	rsync -r raspberry/* victor@raspberrypi.local:/home/victor/Repository
-	ssh victor@raspberrypi.local 'g++ -o Repository/server Repository/server.cpp'
+	ssh victor@raspberrypi.local 'g++ -o Repository/server Repository/server.cpp -lwiringPi'
 
 runVictor: 
 	ssh victor@raspberrypi.local 'Repository/server'

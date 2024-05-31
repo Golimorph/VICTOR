@@ -55,29 +55,29 @@ void loop()
   //vp.obstacleAvoidDrive_0(USdistance);
    
   
-  if (USdistance == 48)
+  if (USdistance == 0)
   {
     speed = 0;
     MOTOR_GO_STOP;
   } 
-  if (USdistance == 49)
+  if (USdistance == 1)
   {
     MOTOR_GO_FORWARD;
   }
-  if (USdistance == 50)
+  if (USdistance == 2)
   {
     MOTOR_GO_BACK;
   }
-  if (USdistance == 51)
+  if (USdistance == 3)
   {
     MOTOR_GO_LEFT;
   }
-  if (USdistance == 52)
+  if (USdistance == 4)
   {
     MOTOR_GO_RIGHT;
   } 
 
-  if (USdistance == 53)
+  if (USdistance == 5)
   {
     if(sf.cycleClock%1000 == 0)
     {
@@ -105,7 +105,7 @@ void loop()
     }
   }
 
-  if (USdistance == 54)
+  if (USdistance == 6)
   {
     sf.smoothMove_pulse(CLAWSERVO, CLAWSERVO_MAX, 20,1,1);
     if(sf.smoothMove_pulse(CLAWSERVO, CLAWSERVO_MIN+40, 20,1,2))

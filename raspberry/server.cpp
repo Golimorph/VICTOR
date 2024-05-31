@@ -4,8 +4,23 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <wiringPiI2C.h>
+#define DEVICE_ID 0x09 //This is the device ID of the arduino, same number written on the arduino side.
 
 #define PORT 8080
+
+
+int sendI2CMessageToArduino (uint8_t data)
+{
+    
+   
+    
+    return 0;
+}
+
+
+
+
 
 int main() {
     int server_fd, new_socket;
@@ -13,6 +28,14 @@ int main() {
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[1024] = {0};
+
+    // Setup I2C communication
+    int fd = wiringPiI2CSetup(DEVICE_ID);
+    if (fd == -1) {
+        std::cout << "Failed to init I2C communication.\n";
+        return -1;
+    }
+    std::cout << "I2C communication successfully setup.\n";
     
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
@@ -51,7 +74,12 @@ int main() {
 
         // Create a string to send back to the client
         std::string messageToClient = "Hello from Raspberry Pi, I got this number: ";
-        messageToClient += std::string(buffer, valread);  // Convert buffer to string and append
+        std::string numberString = std::string(buffer, valread);
+        messageToClient += numberString;  // Convert buffer to string and append
+
+        uint8_t data = static_cast <uint8_t>(std::stoi(numberString));
+        wiringPiI2CWrite(fd, data);
+        std::cout << "Sent data: " << std::to_string(data) << "\n";
     }
 
     //send(new_socket, messageToClient.c_str(), messageToClient.length(), 0);
