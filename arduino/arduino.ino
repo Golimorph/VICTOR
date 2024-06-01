@@ -107,38 +107,38 @@ void loop()
 
   if (USdistance == 6)
   {
-    sf.smoothMove_pulse(CLAWSERVO, CLAWSERVO_MAX, 20,1,1);
-    if(sf.smoothMove_pulse(CLAWSERVO, CLAWSERVO_MIN+40, 20,1,2))
+    sf.smoothMove_pulse(CLAWSERVO, CLAWSERVO_MAX, 1,1,1);
+    if(sf.smoothMove_pulse(CLAWSERVO, CLAWSERVO_MIN+40, 1,1,2))
     {
     sf.resetTasks(1);
     }
-    sf.smoothMove_pulse(ROTSERVO, ROTSERVO_MAX, 20,2,1);
-    if(sf.smoothMove_pulse(ROTSERVO, ROTSERVO_MIN, 20,2,2))
+    sf.smoothMove_pulse(ROTSERVO, ROTSERVO_MAX, 1,2,1);
+    if(sf.smoothMove_pulse(ROTSERVO, ROTSERVO_MIN, 1,2,2))
     {
     sf.resetTasks(2);
     }
-    sf.smoothMove_pulse(SHOULDERSERVORIGHT, SHOULDERSERVORIGHT_MID, 20,3,1);
-    if(sf.smoothMove_pulse(SHOULDERSERVORIGHT, SHOULDERSERVORIGHT_MIN, 20,3,2))
+    sf.smoothMove_pulse(SHOULDERSERVORIGHT, SHOULDERSERVORIGHT_MID, 1,3,1);
+    if(sf.smoothMove_pulse(SHOULDERSERVORIGHT, SHOULDERSERVORIGHT_MIN, 1,3,2))
     {
     sf.resetTasks(3);
     }
-    sf.smoothMove_pulse(ELBOWSERVO, ELBOWSERVO_MIN, 20,3,1);
-    if(sf.smoothMove_pulse(ELBOWSERVO, ELBOWSERVO_MAX, 20,3,2))
+    sf.smoothMove_pulse(ELBOWSERVO, ELBOWSERVO_MIN, 1,3,1);
+    if(sf.smoothMove_pulse(ELBOWSERVO, ELBOWSERVO_MAX, 1,3,2))
     {
     sf.resetTasks(3);
     }
-    sf.smoothMove_pulse(WRISTUPSERVO, WRISTUPSERVO_MIN, 20,4,1);
-    if(sf.smoothMove_pulse(WRISTUPSERVO, WRISTUPSERVO_MAX, 20,4,2))
+    sf.smoothMove_pulse(WRISTUPSERVO, WRISTUPSERVO_MIN, 1,4,1);
+    if(sf.smoothMove_pulse(WRISTUPSERVO, WRISTUPSERVO_MAX, 1,4,2))
     {
     sf.resetTasks(4);
     }
-    sf.smoothMove_pulse(UNDERARMROTSERVO, UNDERARMROTSERVO_MIN, 20,5,1);
-    if(sf.smoothMove_pulse(UNDERARMROTSERVO, UNDERARMROTSERVO_MAX, 20,5,2))
+    sf.smoothMove_pulse(UNDERARMROTSERVO, UNDERARMROTSERVO_MIN, 1,5,1);
+    if(sf.smoothMove_pulse(UNDERARMROTSERVO, UNDERARMROTSERVO_MAX, 1,5,2))
     {
     sf.resetTasks(5);
     }
-    sf.smoothMove_pulse(WRISTTWISTSERVO, WRISTTWISTSERVO_MIN, 20,6,1);
-    if(sf.smoothMove_pulse(WRISTTWISTSERVO, WRISTTWISTSERVO_MAX, 20,6,2))
+    sf.smoothMove_pulse(WRISTTWISTSERVO, WRISTTWISTSERVO_MIN, 1,6,1);
+    if(sf.smoothMove_pulse(WRISTTWISTSERVO, WRISTTWISTSERVO_MAX, 1,6,2))
     {
     sf.resetTasks(6);
     }

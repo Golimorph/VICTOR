@@ -14,7 +14,7 @@ class DanmarkGui {
         frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         frame.layout = BorderLayout()
 
-        val panel = JPanel(GridLayout(3, 3)) // 3x3 grid layout for the buttons
+        val panel = JPanel(GridLayout(4, 4)) // 3x3 grid layout for the buttons
         val emptyLabel = JLabel("") // Empty label for spacing
 
         // Create arrow buttons with labels
@@ -22,22 +22,26 @@ class DanmarkGui {
         val downButton = JButton("\u2193") // Down arrow
         val leftButton = JButton("\u2190") // Left arrow
         val rightButton = JButton("\u2192") // Right arrow
+        val moveButton = JButton("move") // Right arrow
 
         // Add action listeners to the buttons
 
         
 
         upButton.addActionListener {
-            m_victorClient.send("0")
-        }
-        downButton.addActionListener {
             m_victorClient.send("1")
         }
+        downButton.addActionListener {
+            m_victorClient.send("0")
+        }
         leftButton.addActionListener {
-            m_victorClient.send("2")
+            m_victorClient.send("3")
         }
         rightButton.addActionListener {
-            m_victorClient.send("3")
+            m_victorClient.send("4")
+        }
+        moveButton.addActionListener {
+            m_victorClient.send("6")
         }
 
         // Add buttons to the panel
@@ -49,6 +53,8 @@ class DanmarkGui {
         panel.add(rightButton)
         panel.add(emptyLabel)
         panel.add(downButton)
+        panel.add(emptyLabel)
+        panel.add(moveButton)
         panel.add(emptyLabel)
 
         // Add panel to the frame
