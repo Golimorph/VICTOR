@@ -36,6 +36,16 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    // Add this block to include the external source directory especially socketClient/victorClient
+    sourceSets {
+        getByName("main") {
+            java.srcDirs(
+                "src/main/java",
+                "../../danmark/socketClient"  // Add this line to include the external directory
+            )
+        }
+    }
 }
 
 dependencies {

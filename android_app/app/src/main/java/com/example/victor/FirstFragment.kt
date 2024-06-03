@@ -15,6 +15,7 @@ import socketClient.VictorClient
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class FirstFragment : Fragment() {
+    val m_victorClient = VictorClient()
 
     private var _binding: FragmentFirstBinding? = null
 
@@ -34,6 +35,7 @@ class FirstFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         binding.upButton.setOnClickListener { view ->
             Snackbar.make(view, "Robot actio!", Snackbar.LENGTH_LONG)
