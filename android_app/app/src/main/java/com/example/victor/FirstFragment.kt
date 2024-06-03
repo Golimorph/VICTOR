@@ -7,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.victor.databinding.FragmentFirstBinding
+import com.google.android.material.snackbar.Snackbar
+import socketClient.VictorClient
+
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -32,8 +35,10 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        binding.upButton.setOnClickListener { view ->
+            Snackbar.make(view, "Robot actio!", Snackbar.LENGTH_LONG)
+                .setAction("Action", null)
+                .setAnchorView(R.id.fab).show()
         }
     }
 
