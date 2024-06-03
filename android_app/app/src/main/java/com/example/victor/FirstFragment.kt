@@ -9,6 +9,11 @@ import androidx.navigation.fragment.findNavController
 import com.example.victor.databinding.FragmentFirstBinding
 import com.google.android.material.snackbar.Snackbar
 import socketClient.VictorClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+
 
 
 /**
@@ -37,10 +42,29 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        binding.upButton.setOnClickListener { view ->
-            Snackbar.make(view, "Robot actio!", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
+
+        binding.upButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                m_victorClient.send("1")
+            }
+        }
+
+        binding.downButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                m_victorClient.send("0")
+            }
+        }
+
+        binding.leftButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                m_victorClient.send("3")
+            }
+        }
+
+        binding.rightButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                m_victorClient.send("4")
+            }
         }
     }
 

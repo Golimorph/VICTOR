@@ -2,36 +2,45 @@ package socketClient
 
 import java.io.OutputStream
 import java.net.Socket
+import kotlinx.coroutines.*
 
 /**
  * This is a documentation comment for the VictorClient class.
  *
  * More details about the class.
  */
-class VictorClient(val m_serverAddress: String = "192.168.1.69", val m_port: Int = 8080){
+class VictorClient(
+    val m_serverAddress: String = "192.168.1.69", 
+    val m_port: Int = 8080
+) {
+    private var m_socket: Socket? = null
+    private var m_outputStream: OutputStream? = null
 
-    val m_socket = Socket(m_serverAddress, m_port)
-    val m_outputStream: OutputStream = m_socket.getOutputStream()
-
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                m_socket = Socket(m_serverAddress, m_port)
+                m_outputStream = m_socket!!.getOutputStream()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     /**
-     * This is a documentation comment for the myFunction method.
+     * This is a documentation comment for the send method.
      *
      * @param data data to be sent to victor (raspberry) program.
      */
-    fun send(data: String) {
-        
-        println("Sending to victor: " + data)
-        m_outputStream.write(data.toByteArray())
-        m_outputStream.flush()
+    suspend fun send(data: String) {
+        withContext(Dispatchers.IO) {
+            try {
+                println("Sending to victor: $data")
+                m_outputStream?.write(data.toByteArray())
+                m_outputStream?.flush()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 }
-
-
-
-
-
-
-
-
-
