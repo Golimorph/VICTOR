@@ -9,6 +9,10 @@ import kotlinx.coroutines.*
  *
  * More details about the class.
  */
+
+//Flrurbble: 192.168.1.69
+//Golimorph: 192.168.146.182
+
 class VictorClient(
     val m_serverAddress: String = "192.168.1.69", 
     val m_port: Int = 8080
