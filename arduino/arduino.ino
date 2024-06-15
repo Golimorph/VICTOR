@@ -1,60 +1,63 @@
 /*Victor robot program, created by Richard Edberg 2021-09-05.
  * 
  */
-#include <Wire.h>
+
 #include <ServoFunctions.h>
 #include "../victorPrograms/victorPrograms.h"
-#include<stdio.h>
-#include<stdbool.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <i2cMessageHandler.h>
+#include <deque.h>
+#include <i2c.h>
+
 const int threads = 10;
 const int tasks = 20;
 ServoFunctions sf(threads,tasks);
+I2cMessageHandler i2cHandler(sf);
 VictorPrograms vp(&sf);
-
-
-
-
-////I2C receive slave
-void initI2C()
-{
-  Wire.begin(9); //I2C slave
-  Wire.onReceive(receiveEvent);// I2C slave
-}
-int USdistance=0;
-void receiveEvent(int bytes)
-{
-  USdistance = Wire.read();    // read one character from the I2C
-}
-//end I2C receive slave
-
 
 
 void setup() 
 {
-initI2C();
-sf.setup();
 Serial.begin(9600); //terminal print
-Serial.println("starting");
-delay(1000);
+Serial.println("Serial print begun.");
+sf.setup();
+Serial.println("ServoFunctions setup done.");
+i2c::initI2C();
+Serial.println("I2C initialized.");
+Serial.println("Entering loop.");
 }
 
 
 
 
-int speed = 0;
-bool goBack = false;
 
 
-int backCounter=0;
 void loop() 
 { 
+
   sf.cycleClock++;
+
+  if(i2c::i2cMessageQueue.count() > 0)
+  {
+    std::vector<uint8_t> message = i2c::i2cMessageQueue.pop_front();
+    i2cHandler.handleMessage(message);
+  }
+
+
+  if(sf.cycleClock % 60000 ==0)
+  {
+    Serial.println("i2c::i2cMessageQueue.count() = " + String(i2c::i2cMessageQueue.count()));
+  }
+
+
+
   //sf.updateMotorsHallSensorPositionBlocking();
  
   //sf.moveUSInCircle(5);
   //vp.obstacleAvoidDrive_0(USdistance);
    
-  
+ /* 
   if (USdistance == 0)
   {
     speed = 0;
@@ -144,7 +147,8 @@ void loop()
     }
   }
 
- }
+*/
+}
 
 
 

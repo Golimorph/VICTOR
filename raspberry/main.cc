@@ -1,21 +1,15 @@
-//main.cc
-#include <iostream>
-#include <wiringPiI2C.h>
-#define DEVICE_ID 0x09
+//created by Richard Edberg 2024
+#include "victorI2cMaster.h"
+#include <string>
+#include "victorServer.h"
 
 
-int main (int argc, char **argv)
+int main() 
 {
-    // Setup I2C communication
-    int fd = wiringPiI2CSetup(DEVICE_ID);
-    if (fd == -1) {
-        std::cout << "Failed to init I2C communication.\n";
-        return -1;
-    }
-    std::cout << "I2C communication successfully setup.\n";
-    // Send data to arduino
-    uint8_t data_to_send = static_cast <uint8_t> (*argv[1]);
-    wiringPiI2CWrite(fd, data_to_send);
-    std::cout << "Sent data: " << (int)data_to_send << "\n";
+	    
+    VictorI2cMaster victorI2cMaster;
+    VictorServer victorServer(std::bind(&VictorI2cMaster::send, &victorI2cMaster, std::placeholders::_1));
+    victorServer.startI2Cforwarding();
+
     return 0;
 }

@@ -1,0 +1,21 @@
+//created by Richard Edberg 2024
+#pragma once
+
+#include <arduinoIf.h>
+#include <ServoFunctions.h>
+
+class I2cMessageHandler
+{
+public: 
+	I2cMessageHandler(ServoFunctions& sf);
+
+	bool handleMessage(std::vector<uint8_t> message);
+private:
+	bool handleMoveTracksMessage(std::vector<uint8_t> message);
+
+
+	ServoFunctions* m_sf;
+};
+
+
+

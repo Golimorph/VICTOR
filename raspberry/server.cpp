@@ -78,14 +78,11 @@ int main() {
         messageToClient += numberString;  // Convert buffer to string and append
 
         uint8_t data = static_cast <uint8_t>(std::stoi(numberString));
-        wiringPiI2CWrite(fd, data);
+        //wiringPiI2CWrite(fd, data);
         std::cout << "Sent data: " << std::to_string(data) << "\n";
     }
 
-    //send(new_socket, messageToClient.c_str(), messageToClient.length(), 0);
-    //std::cout << "Message sent: " << messageToClient << std::endl;
     
-
     close(new_socket);
     close(server_fd);
     return 0;

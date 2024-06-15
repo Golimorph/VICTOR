@@ -307,6 +307,11 @@ bool ServoFunctions::sleep(const long int cycles, const int thread, const int ta
 
 void ServoFunctions::setMotorSpeed(int speedA, int speedB)
 {
+    const double speedMultiplier = 1.3;
+    const int maxSpeed = 120;
+    speedA = static_cast<int>(static_cast<double>(speedA)*speedMultiplier);
+    speedB = static_cast<int>(static_cast<double>(speedB)*speedMultiplier);
+
     //This set the direction of the motor forward or backward. A negative speed means to go backward
     if(speedA >= 0)
     {
@@ -315,7 +320,7 @@ void ServoFunctions::setMotorSpeed(int speedA, int speedB)
     {
         digitalWrite(DIRA,LOW);
     }
-    analogWrite(PWMA, abs(speedA));
+    analogWrite(PWMA, std::min(abs(speedA),maxSpeed));
 
     //This set the direction of the motor forward or backward. A negative speed means to go backward
     if(speedB >= 0)
@@ -324,7 +329,7 @@ void ServoFunctions::setMotorSpeed(int speedA, int speedB)
     }else{
         digitalWrite(DIRB,HIGH);
     }
-    analogWrite(PWMB, abs(speedA));
+    analogWrite(PWMB, std::min(abs(speedB),maxSpeed));
 }
 
 
