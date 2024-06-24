@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <functional>
 #include <sstream>
-#include <wiringPi.h>
+#include "lights.h"
 
 #define PORT 8080
 
@@ -24,7 +24,6 @@ public:
 private:
 	CallbackType m_i2cCallback;
 	bool initializeSocket();
-	void turnOnHeadLights();
 	std::vector<std::string> splitString(const std::string &str);
 	int m_socket;
     int m_server_fd;
