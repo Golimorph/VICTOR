@@ -13,7 +13,7 @@ victorWithArduino:
 	#build raspberry program
 	ssh victor@raspberrypi.local 'g++ $(RASPBERRY_INCS) -o $(RASPBERY_CPP_REPO)/main $(RASPBERRY_SRCS) -lwiringPi'
 	#build arduino
-	ssh victor@raspberrypi.local '/home/victor/Arduino/arduino-cli compile --fqbn arduino:avr:uno /home/victor/Arduino/arduino --library /home/victor/Arduino/arduino/lib/Arduino_AVRSTL --library /home/victor/Arduino/arduino/lib/Adafruit_PWMServoDriver --library /home/victor/Arduino/arduino/lib/ServoFunctions --library /home/victor/Arduino/arduino/lib/Ultrasonic --library /home/victor/Arduino/arduino/lib/victorPrograms --library /home/victor/Arduino/arduino/lib/I2cMessageHandler --library /home/victor/Arduino/arduino/if --library /home/victor/Arduino/arduino/externalLib'
+	ssh victor@raspberrypi.local '/home/victor/Arduino/arduino-cli compile --fqbn arduino:avr:uno /home/victor/Arduino/arduino --library /home/victor/Arduino/arduino/lib/Arduino_AVRSTL --library /home/victor/Arduino/arduino/lib/Adafruit_PWMServoDriver --library /home/victor/Arduino/arduino/lib/ServoFunctions --library /home/victor/Arduino/arduino/lib/Ultrasonic --library /home/victor/Arduino/arduino/lib/victorPrograms --library /home/victor/Arduino/arduino/lib/I2cMessageHandler --library /home/victor/Arduino/arduino/lib/InverseKinematics --library /home/victor/Arduino/arduino/if --library /home/victor/Arduino/arduino/externalLib'
 	ssh victor@raspberrypi.local '/home/victor/Arduino/arduino-cli upload -p /dev/ttyUSB0 --fqbn arduino:avr:uno /home/victor/Arduino/arduino'
 
 #copy and upload C++ code to raspberrypi and arduino on victor
@@ -21,6 +21,12 @@ victorRaspberry:
 	rsync -r raspberry/* victor@raspberrypi.local:/home/victor/Repository
 	rsync -r arduino/if/ victor@raspberrypi.local:/home/victor/Repository
 	ssh victor@raspberrypi.local 'g++ $(RASPBERRY_INCS) -o $(RASPBERY_CPP_REPO)/main $(RASPBERRY_SRCS) -lwiringPi'
+
+victorArduino:
+	rsync -r arduino victor@raspberrypi.local:/home/victor/Arduino
+	ssh victor@raspberrypi.local '/home/victor/Arduino/arduino-cli compile --fqbn arduino:avr:uno /home/victor/Arduino/arduino --library /home/victor/Arduino/arduino/lib/Arduino_AVRSTL --library /home/victor/Arduino/arduino/lib/Adafruit_PWMServoDriver --library /home/victor/Arduino/arduino/lib/ServoFunctions --library /home/victor/Arduino/arduino/lib/Ultrasonic --library /home/victor/Arduino/arduino/lib/victorPrograms --library /home/victor/Arduino/arduino/lib/I2cMessageHandler --library /home/victor/Arduino/arduino/lib/InverseKinematics --library /home/victor/Arduino/arduino/if --library /home/victor/Arduino/arduino/externalLib'
+	ssh victor@raspberrypi.local '/home/victor/Arduino/arduino-cli upload -p /dev/ttyUSB0 --fqbn arduino:avr:uno /home/victor/Arduino/arduino'
+
 
 runVictor: 
 	ssh victor@raspberrypi.local 'Repository/main'

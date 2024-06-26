@@ -2,9 +2,10 @@ Compile and upload everything:
 
 	make
 
-Uploading and compile raspberry programs on victor:
+Uploading and compile raspberry or Arduino programs on victor:
 
 	make victorRaspberry 
+	make victorArduino
 
 Compile danmark program: 
 

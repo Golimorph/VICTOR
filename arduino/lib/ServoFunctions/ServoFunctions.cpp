@@ -3,19 +3,8 @@
 #include "ServoFunctions.h"
 
 
-ServoFunctions::ServoFunctions(const int threads, const int tasks)
+ServoFunctions::ServoFunctions()
 {
-    cycleClock=0;
-    
-    for(int i=0; i<threads; i++)
-    {
-        m_taskComplete.push_back({true});
-        for(int j=1; j<tasks; j++)
-        {
-            m_taskComplete[i].push_back(false);
-        }
-        m_sleepValues.push_back(0);
-    }
 }
 
 int ServoFunctions::getPWM(int servoNumber)
@@ -32,14 +21,6 @@ int ServoFunctions::getMotorPosRight()
 {
     return m_positionMotorHallRight;
 }
-
-void ServoFunctions::resetTasks(int thread)
-{
-    m_taskComplete[thread]={true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-}
-
-
-
 
 void ServoFunctions::setup()
 {
@@ -58,16 +39,17 @@ void ServoFunctions::setup()
     setPWM(WRISTTWISTSERVO,WRISTTWISTSERVO_MID);
     setPWM(CLAWSERVO,CLAWSERVO_MAX);
 
-    //TRACK MOTOR CONTROLS
     pinMode(DIRA,OUTPUT);
     pinMode(PWMA,OUTPUT);
     pinMode(DIRB,OUTPUT);
     pinMode(PWMB,OUTPUT);
-    //pinMode(DIRC,OUTPUT);
-    //pinMode(PWMC,OUTPUT);
-    //pinMode(DIRD,OUTPUT);
-    //pinMode(PWMD,OUTPUT);
+    
     initMotorHallSensors();
+
+    for (int servo = 0; servo < NUMBER_OF_SERVOS; ++servo)
+    {
+        desiredPWMs[servo] = currentPWMs[servo];
+    }
 }
 
 //MotorHallSensor
@@ -113,196 +95,182 @@ int ServoFunctions::updateMotorsHallSensorPosition(struct pt* pt)
 }
  */
 
+int ServoFunctions::angleToPWM(const int servoNumber, const double angle) const
+{
+    switch(servoNumber)
+    {   
+    case ROTSERVO:
+        return int(-angle*2.48 +0.5) + ROTSERVO_MID;
+    case SHOULDERSERVORIGHT: 
+        if(angle>0)//try to compensate backlash, gravity is different in the two directions.
+        {
+            return int(angle*2.56 + 0.5) + SHOULDERSERVO_ZEROANGLE_UPRIGHT;
+        }else
+        {
+            return int(angle*2.43 + 0.5) + SHOULDERSERVO_ZEROANGLE_UPRIGHT;
+        }
+    case ELBOWSERVO:
+        return int(-0.00813*angle*angle + 3.08*angle + 0.5) + ELBOWSERVO_MID;
+    case UNDERARMROTSERVO: 
+        return int(angle*2.48 + 0.5) + UNDERARMROTSERVO_MID;
+    case WRISTUPSERVO: 
+        return int(angle*2.48 + 0.5) + WRISTUPSERVO_MID;
+    case WRISTTWISTSERVO: 
+        return int(angle*2.48 + 0.5) + WRISTTWISTSERVO_MID;
+    case CLAWSERVO: 
+        return int(angle*2.48 + 0.5) + CLAWSERVO_MID;
+    }
+}
+
 bool ServoFunctions::setPWM(const int servoNumber, const int value)
 {
-	if(servoNumber==USERVO_X)
-	{
-		if(value>=USERVOMIN_X && value<=USERVOMAX_X)
-		{
-			adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
-			currentPWMs[servoNumber]=value;
-			return true;
-		}
-	}
 
-	if(servoNumber==USERVO_Y)
-	{
-		if(value>=USERVOMIN_Y && value<=USERVOMAX_Y)
-		{
-			adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
-			currentPWMs[servoNumber]=value;
-			return true;
-		}
-	}
-
-	if(servoNumber==ROTSERVO)
-	{
-		if(value>=ROTSERVO_MIN && value<=ROTSERVO_MAX)
-		{
-			adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
-			currentPWMs[servoNumber]=value;
-			return true;
-		}
-	}
-
-	if(servoNumber==SHOULDERSERVORIGHT)
-	{
-		if(value>=SHOULDERSERVORIGHT_MIN && value<=SHOULDERSERVORIGHT_MAX)
-		{
-			int valueLeft=SHOULDERSERVOLEFT_MID+(SHOULDERSERVORIGHT_MID-value);
-			if(valueLeft>=SHOULDERSERVOLEFT_MIN && valueLeft<=SHOULDERSERVOLEFT_MAX)
-			{
-				adafruit_PWMServoDriver.setPWM(SHOULDERSERVORIGHT, 0, value);
-				currentPWMs[SHOULDERSERVORIGHT]=value;
-
-
-				adafruit_PWMServoDriver.setPWM(SHOULDERSERVOLEFT, 0, valueLeft);
-				currentPWMs[SHOULDERSERVOLEFT]=valueLeft;
-				return true;
-			}
-		}
-	}
-
-	if(servoNumber==ELBOWSERVO)
-	{
-		if(value>=ELBOWSERVO_MIN && value<=ELBOWSERVO_MAX)
-		{
-			adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
-			currentPWMs[servoNumber]=value;
-			return true;
-		}
-	}
-
-	if(servoNumber==UNDERARMROTSERVO)
-	{
-		if(value>=UNDERARMROTSERVO_MIN && value<=UNDERARMROTSERVO_MAX)
-		{
-			adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
-			currentPWMs[servoNumber]=value;
-			return true;
-		}
-	}
-
-	if(servoNumber==WRISTUPSERVO)
-	{
-		if(value>=WRISTUPSERVO_MIN && value<=WRISTUPSERVO_MAX)
-		{
-			adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
-			currentPWMs[servoNumber]=value;
-			return true;
-		}
-	}
-
-	if(servoNumber==WRISTTWISTSERVO)
-	{
-		if(value>=WRISTTWISTSERVO_MIN && value<=WRISTTWISTSERVO_MAX)
-		{
-			adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
-			currentPWMs[servoNumber]=value;
-			return true;
-		}
-	}
-
-	if(servoNumber==CLAWSERVO)
-	{
-		if(value>=CLAWSERVO_MIN && value<=CLAWSERVO_MAX)
-		{
-			adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
-			currentPWMs[servoNumber]=value;
-			return true;
-		}
-	}
-	return false;
-}
-
-inline double getPulseFromAngle(const int servoNumber, const int angle)
-{
-	return 0; //TODO
-}
-
-
-void ServoFunctions::smoothMove(const int servoNumber, const int angle, const int speed)
-{
-	
-	//TODO
-
-}
-
-//Performs a smooth move from existing position to newPulse with speed. 
-//On completion it will reset the task on this thread so that the thread is restarted and all smoothmoves written on it will be done again in task order.
-void ServoFunctions::rsmoothMove_pulse(const int servoNumber, const int newPulse, const int speed, const int thread, const int task)
-{
-    if(smoothMove_pulse(servoNumber, newPulse,speed,thread,task)) resetTasks(thread);
-}
-
-
-//Performs a smooth move from existing position to newPulse with speed.
-bool ServoFunctions::smoothMove_pulse(const int servoNumber, const int newPulse, const int speed, const int thread, const int task)
-{
-    if((cycleClock%speed)==0)
+    switch(servoNumber)
     {
-        if((!m_taskComplete[thread][task] && m_taskComplete[thread][task-1]))
-        {
-           
-            if(abs(newPulse-currentPWMs[servoNumber])<3)
+        case USERVO_X:
+            if(value>=USERVOMIN_X && value<=USERVOMAX_X)
             {
-                m_taskComplete[thread][task]=true;
+             adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
+             currentPWMs[servoNumber]=value;
+             return true;
+            }
+            return false;
+        case USERVO_Y:
+            if(value>=USERVOMIN_Y && value<=USERVOMAX_Y)
+            {
+                adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
+                currentPWMs[servoNumber]=value;
                 return true;
             }
-            if(currentPWMs[servoNumber] <= newPulse)
+            return false;
+        case ROTSERVO:
+            if(value>=ROTSERVO_MIN && value<=ROTSERVO_MAX)
             {
-                setPWM(servoNumber, currentPWMs[servoNumber]+1);
-            }else{
-                setPWM(servoNumber, currentPWMs[servoNumber]-1);
+                adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
+                currentPWMs[servoNumber]=value;
+                return true;
             }
-        }
+            return false;
+        case SHOULDERSERVORIGHT:
+            if(value>=SHOULDERSERVORIGHT_MIN && value<=SHOULDERSERVORIGHT_MAX)
+            {
+                int valueLeft=SHOULDERSERVOLEFT_MID+(SHOULDERSERVORIGHT_MID-value);
+                if(valueLeft>=SHOULDERSERVOLEFT_MIN && valueLeft<=SHOULDERSERVOLEFT_MAX)
+                {
+                    adafruit_PWMServoDriver.setPWM(SHOULDERSERVORIGHT, 0, value);
+                    currentPWMs[SHOULDERSERVORIGHT]=value;
+                    adafruit_PWMServoDriver.setPWM(SHOULDERSERVOLEFT, 0, valueLeft);
+                    currentPWMs[SHOULDERSERVOLEFT]=valueLeft;
+                    return true;
+                }
+            }
+            return false;
+        case ELBOWSERVO:
+            if(value>=ELBOWSERVO_MIN && value<=ELBOWSERVO_MAX)
+            {
+                adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
+                currentPWMs[servoNumber]=value;
+                return true;
+            }
+            return false;
+        case UNDERARMROTSERVO:
+            if(value>=UNDERARMROTSERVO_MIN && value<=UNDERARMROTSERVO_MAX)
+            {
+                adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
+                currentPWMs[servoNumber]=value;
+                return true;
+            }
+            return false;
+        case WRISTUPSERVO:
+            if(value>=WRISTUPSERVO_MIN && value<=WRISTUPSERVO_MAX)
+            {
+                adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
+                currentPWMs[servoNumber]=value;
+                return true;
+            }
+            return false;
+        case WRISTTWISTSERVO:
+            if(value>=WRISTTWISTSERVO_MIN && value<=WRISTTWISTSERVO_MAX)
+            {
+                adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
+                currentPWMs[servoNumber]=value;
+                return true;
+            }
+            return false;
+        case CLAWSERVO:
+            if(value>=CLAWSERVO_MIN && value<=CLAWSERVO_MAX)
+            {
+                adafruit_PWMServoDriver.setPWM(servoNumber, 0, value);
+                currentPWMs[servoNumber]=value;
+                return true;
+            }
+            return false;
+        default:
+            return true;
+    }
+}
+
+
+
+bool ServoFunctions::moveArm(const double x, const double y, const double z, const int time)
+{
+    double shoulderServoAngle,elbowServoAngle,rotAngle;
+
+    if(!m_inverseKinematics.solve(shoulderServoAngle, elbowServoAngle, rotAngle, x, y, z))
+    {
+        Serial.println("Could not move to desired location: (" + String(x) + ", " + String(y) + ", " + String(z) + ").");
         return false;
     }
+    
+    moveServo(ROTSERVO, rotAngle, time);
+    moveServo(SHOULDERSERVORIGHT, shoulderServoAngle, time);
+    moveServo(ELBOWSERVO, elbowServoAngle , time);
+    
+    return true;
 }
 
 
-void ServoFunctions::moveUSInCircle(const int speed)
+void ServoFunctions::moveServo(const int servoNumber, const double angle, const int time)
 {
-    int xmin=USERVOMIN_X+110;
-    int xmax=USERVOMAX_X-110;
-    int ymin=USERVOMIN_Y+30;
-    int ymax=USERVOMAX_Y-80;
-    
-    
-    smoothMove_pulse(USERVO_X, xmin,speed,0,1);
-    smoothMove_pulse(USERVO_X, xmax,speed,0,2);
-    smoothMove_pulse(USERVO_Y, ymin,speed,0,3);
-    smoothMove_pulse(USERVO_X, xmin,speed,0,4);
-    smoothMove_pulse(USERVO_X, xmax,speed,0,5);
-    rsmoothMove_pulse(USERVO_Y, ymax,speed,0,6);
-    
-    /*
-    smoothMove_pulse(USERVO_Y, ymax,10,0,3);
-    smoothMove_pulse(USERVO_X, xmin,100,0,1);
-    smoothMove_pulse(USERVO_X, xmax,100,0,2);
-    smoothMove_pulse(USERVO_X, xmin,100,0,3);
-    
-    smoothMove_pulse(USERVO_X, xmax,100,0,3);
+	int desiredPWM = angleToPWM(servoNumber,angle);
+    int numberOfPWMsteps = abs(desiredPWM-currentPWMs[servoNumber]);
 
-    if(smoothMove_pulse(USERVO_Y, ymin,10,0,4))
-    {
-        resetTasks(0);
+    if(numberOfPWMsteps == 0)
+    {   
+        //In case there is no change in servo position, return directly.
+        return;
     }
-     */
+    
+    millisecondsPerPWMStep[servoNumber] = time/numberOfPWMsteps;
+    desiredPWMs[servoNumber] = desiredPWM;
 }
 
-bool ServoFunctions::sleep(const long int cycles, const int thread, const int task)
+void ServoFunctions::refresh()
 {
-    if((!m_taskComplete[thread][task] && m_taskComplete[thread][task-1]))
-    {
-        if(m_sleepValues[thread]++>cycles)
+
+    int deltaPWM = desiredPWMs[SHOULDERSERVORIGHT]-currentPWMs[SHOULDERSERVORIGHT];
+    updateServoPositions();
+}
+
+void ServoFunctions::updateServoPositions()
+{
+    unsigned long time = millis();
+
+    for(int servoNumber = 0; servoNumber < NUMBER_OF_SERVOS; ++servoNumber)
+    { 
+        bool waitCompleted = (time - lastPWMupdateTime[servoNumber]) > millisecondsPerPWMStep[servoNumber];
+        int deltaPWM = desiredPWMs[servoNumber]-currentPWMs[servoNumber];
+        
+        if(waitCompleted && abs(deltaPWM)>1)
         {
-            m_taskComplete[thread][task]=true;
-            m_sleepValues[thread]=0;
-            return true;
+            lastPWMupdateTime[servoNumber] = time;   
+            if(!setPWM(servoNumber, currentPWMs[servoNumber] + 2*(deltaPWM > 0) - 1) && !errorPrinted)
+            {
+                Serial.println("Could not set desired PWM on servo " + String(servoNumber) + ", closest value is set automatically.");
+                errorPrinted = true;
+            }
         }
     }
-    return false;
 }
 
 void ServoFunctions::setMotorSpeed(int speedA, int speedB)
@@ -332,50 +300,3 @@ void ServoFunctions::setMotorSpeed(int speedA, int speedB)
     analogWrite(PWMB, std::min(abs(speedB),maxSpeed));
 }
 
-
-/*
-void ServoFunctions::moveUSLeftRight(int speed)
-{
-    for(int i = USERVOMIN_X+170; i< USERVOMAX_X-170; i=i+1)
-    {
-        setPWM(0, i);
-        delay(100/speed);
-    }
-    
-    
-    for(int i = USERVOMAX_X-170; i> USERVOMIN_X+170; i=i-1)
-    {
-        setPWM(0, i);
-        delay(100/speed);
-    }
-
-
-}
-*/
-
-/*
-int ServoFunctions::obstacleAvoidDrive(struct pt* pt) {
-  PT_BEGIN(pt);
-  int OLDobstacleFound=0;
-  for(;;)
-  {
-      if(obstacleFound==0)
-      {
-        MOTOR_GO_FORWARD;
-      }
-      if(obstacleFound==1)
-      {
-        if(getPWM(USERVO_X)>185)
-        {
-          MOTOR_GO_LEFT;
-        }else
-        {
-          MOTOR_GO_RIGHT;
-        }
-      }
-      OLDobstacleFound = obstacleFound;
-      PT_YIELD(pt);
-  }
-  PT_END(pt);
-}
-*/
