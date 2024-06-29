@@ -4,6 +4,7 @@ package com.example.victor.victorCommunication
 tracks leftSpeed and rightSpeed. The toString of this dataClass is sent do victor and victor has
 a parser and knows how to deconstruct and act on it.
  */
-data class MoveTracksMessage(val leftTrackSpeed: Int, val rightTrackSpeed: Int) {
+data class MoveTracksMessage(val leftTrackSpeed: Int, val rightTrackSpeed: Int) {}
 
-}
+/* Message to move the robot arm to specified coordinates [mm] */
+data class MoveArmMessage(val x: Int, val y: Int, val z: Int) {}
