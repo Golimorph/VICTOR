@@ -1,4 +1,4 @@
-
+//created by Richard Edberg 2021
 #ifndef SERVO_FUNCTIONS_H
 #define SERVO_FUNCTIONS_H
 
@@ -8,13 +8,7 @@
 #include <string.h>
 #include <Adafruit_PWMServoDriver.h>
 #include "../Arduino_AVRSTL/src/vector"
-
-
-//Each instance of this calls is a thread that can control one servo.
-//To move several servos at the same time, multiple instances are needed.
-
-
-
+#include <inverseKinematics.h>
 
 
 //MOTOR CONTROLS
@@ -32,20 +26,10 @@
 #define outputMotorHallLeftA 12
 #define outputMotorHallLeftB 13
 
-
-#define MOTOR_GO_FORWARD  {digitalWrite(DIRA,HIGH);analogWrite(PWMA,100);digitalWrite(DIRB,LOW);analogWrite(PWMB,100);} //车体前进
-#define MOTOR_GO_BACK   {digitalWrite(DIRA,LOW);analogWrite(PWMA,100);digitalWrite(DIRB,HIGH);analogWrite(PWMB,100);}   //车体后退
-#define MOTOR_GO_LEFT   {digitalWrite(DIRA,LOW);analogWrite(PWMA,100);digitalWrite(DIRB,LOW);analogWrite(PWMB,100);}  //车体左转
-#define MOTOR_GO_RIGHT    {digitalWrite(DIRA,HIGH);analogWrite(PWMA,100);digitalWrite(DIRB,HIGH);analogWrite(PWMB,100);}  //车体右转
-#define MOTOR_GO_STOP   {digitalWrite(DIRA,LOW);analogWrite(PWMA,0);digitalWrite(DIRB,LOW);analogWrite(PWMB,0);}       //车体静止
-
-
-
-
-
 #define MAX_PACKETSIZE 32
 
-//SEROV CONTROLS
+//SERVO CONTROLS
+#define NUMBER_OF_SERVOS 16
 
 #define SERVOMIN 125
 #define SERVOMAX 625
@@ -57,21 +41,22 @@
 #define ROTSERVO_MID 400
 #define ROTSERVO_MAX 500
 
-#define SHOULDERSERVOLEFT 4
-#define SHOULDERSERVOLEFT_MIN 0
-#define SHOULDERSERVOLEFT_MID 350
-#define SHOULDERSERVOLEFT_MAX 1000
-#define SHOULDERSERVORIGHT 5
-#define SHOULDERSERVORIGHT_MIN 190 //-65.7 degrees
-#define SHOULDERSERVORIGHT_MID 350
-#define SHOULDERSERVORIGHT_MAX 575
-#define SHOULDERSERVO_ZEROANGLE_UPRIGHT 356 //0 degrees
+/*calibrated ** */
+#define SHOULDERSERVOLEFT 4 //Do not use
+#define SHOULDERSERVOLEFT_MIN 0//use RIGHT for setting both
+#define SHOULDERSERVOLEFT_MID 350 //only for calibration
+#define SHOULDERSERVOLEFT_MAX 1000 //use RIGHT for setting both
+#define SHOULDERSERVORIGHT 5 //Do use please
+#define SHOULDERSERVORIGHT_MIN 190 //-65.5 degrees
+#define SHOULDERSERVORIGHT_MID 350 //only for calibration
+#define SHOULDERSERVORIGHT_MAX 575 // 88.0 degrees 
+#define SHOULDERSERVO_ZEROANGLE_UPRIGHT 356 //0 degrees, use this
 
-
+/*calibrated ** */
 #define ELBOWSERVO 11
-#define ELBOWSERVO_MIN 240 //-31.9 degrees
+#define ELBOWSERVO_MIN 240 //-32.5 degrees
 #define ELBOWSERVO_MID 350 //0, perpendicular to shoudler arm.
-#define ELBOWSERVO_MAX 525 //70.1 degrees
+#define ELBOWSERVO_MAX 550 //525 is 68.3 degrees
 
 #define UNDERARMROTSERVO 6
 #define UNDERARMROTSERVO_MIN 125 //97.7 degrees anti-clockwise.(82.3)
@@ -93,7 +78,6 @@
 #define CLAWSERVO_MID 400
 #define CLAWSERVO_MAX 500
 
-
 //ULTRASONIC SENSOR SERVOS.
 #define USERVO_X 0
 #define USERVO_Y 1
@@ -104,58 +88,82 @@
 #define USERVOMID_Y 330
 #define USERVOMAX_Y 410
 
+//resting position 
+//sf.moveServo(SHOULDERSERVORIGHT, -80, 3000);
+//sf.moveServo(ELBOWSERVO, 75, 3000);
+
 
 class ServoFunctions
 {
 public:
-    ServoFunctions(const int, const int);
-    
-    int USdistance=1000;
-    
+    ServoFunctions();
+
+    /*! @brief sets up the communication with the servo shield and initializes 
+     * all servos to their default position.*/
     void setup();
-    void smoothMove(const int servoNumber, const int newPulse, const int speed);
-    bool smoothMove_pulse(const int servoNumber, const int newPulse, const int speed, const int thread, const int task);
-    void rsmoothMove_pulse(const int servoNumber, const int newPulse, const int speed, const int thread, const int task);
+
+
+    /*! @brief move the arm to coordinates x,y,z relative to the
+     * center of victor.
+     * @param x distance to the right of victor center[mm]
+     * @param y distance in front of victor center [mm]
+     * @param z distance above victor center [mm]
+     * @param time, the time it shall take to complete the move to the new coordinates [ms]*/
+    bool moveArm(const double x, const double y, const double z, const int time);
     
-    int smoothMove_pulsePT(struct pt* pt);
-    int getA();
-    void moveUSInCircle(int speed);
-    int updateMotorsHallSensorPosition(struct pt* pt);
+    /*! @brief moves a servo from current angle to new angle.
+     * This method sets the private variable desiredPWM and the millisecondsPerPWMStep (speed)
+     * The method call is non-blocking and the actual servo movement is done by increments
+     * in the arduino loop() context.
+     * @param servoNumber which servo
+     * @param angle the new angle for the servo
+     * @param time the time in ms it shall take for the servo to reach the new position (i.e. speed of the movement)*/
+    void moveServo(const int servoNumber, const double angle, const int time);
+    
+    /*! @brief set the speed of the two tracks of victor
+     * speedA left track speed
+     * speedB right track speed*/
+    void setMotorSpeed(int speedA, int speedB);
+
+
     int getMotorPosLeft();
     int getMotorPosRight();
     int getPWM(int servoNumber);
-    int obstacleAvoidDrive(struct pt* pt);
-    void resetTasks(int thread);
-
-    void setMotorSpeed(int speedA, int speedB);
     
-    unsigned long long int cycleClock;
+    /*! @brief this void is called once in each arduino loop and ensures that each 
+     * servo is moving toward the desired PWM with the speed millisecondsPerStep
+     * and that all functions are updated. It is needed because arduino does not 
+     * support threading in a simple way, and this instead acts as sort of a polling technique*/
+    void refresh();
+    
 private:
-    
-    std::vector<std::vector<bool>> m_taskComplete;
-    std::vector<long int> m_sleepValues;
-    bool sleep(const long int cycles, const int thread, const int task);
-    
-    void ServoFunctions::initMotorHallSensors();
-	char buffUART[MAX_PACKETSIZE];
-	unsigned int buffUARTIndex = 0;
-	unsigned long preUARTTick = 0;
-    Adafruit_PWMServoDriver adafruit_PWMServoDriver;
-    bool setPWM(const int servoNumber, const int value);
-    int currentPWMs [10];
 
-    //Motors Hall sensors
-    int m_positionMotorHallRight = 0;
-    int m_aStateMotorHallRight;
-    int m_aLastStateMotorHallRight;
-    int m_positionMotorHallLeft = 0;
-    int m_aStateMotorHallLeft;
-    int m_aLastStateMotorHallLeft;
+    //Refresh methods and variables:
+    void updateServoPositions();
     
-    //Moving servo protothread variables:
+    //help methods and variables:
+    void initMotorHallSensors();
+    bool setPWM(const int servoNumber, const int value);
+    int angleToPWM(const int servoNumber, const double angle) const;
+    InverseKinematics m_inverseKinematics;
     
+    //library variables:
+    Adafruit_PWMServoDriver adafruit_PWMServoDriver;
     
-    
+    //State variables:
+    int currentPWMs[NUMBER_OF_SERVOS]; //The current position of each servo
+    int desiredPWMs[NUMBER_OF_SERVOS]; //The desired position of each servo
+    unsigned int millisecondsPerPWMStep[NUMBER_OF_SERVOS] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};//The speed of each servo, can be positive or negative.
+    unsigned long lastPWMupdateTime[NUMBER_OF_SERVOS] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};//The time in ms from arduino start when each servo was updated.
+    bool errorPrinted = false;
+
+
+    int m_positionMotorHallRight = 0; //Motors Hall sensors
+    int m_aStateMotorHallRight; //Motors Hall sensors
+    int m_aLastStateMotorHallRight; //Motors Hall sensors
+    int m_positionMotorHallLeft = 0; //Motors Hall sensors
+    int m_aStateMotorHallLeft; //Motors Hall sensors
+    int m_aLastStateMotorHallLeft; //Motors Hall sensors
 
 };
 

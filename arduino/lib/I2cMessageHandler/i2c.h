@@ -4,14 +4,15 @@
 
 #include <Wire.h>
 
+#define I2C_MESSAGE_QUEUE_SIZE 5
+
 namespace i2c
 {
-static constexpr int i2cMessageQueueSize = 20;
 
 /*! @briefQueue with I2C messages from raspberrypi
  * maximum 20 queued tasks at the same time. (seems to be size limitation, will not compile at 256, 
  * can find optimum largest value later if needed.)*/
-Deque<std::vector<uint8_t>> i2cMessageQueue(i2cMessageQueueSize);
+Deque<std::vector<uint8_t>> i2cMessageQueue(I2C_MESSAGE_QUEUE_SIZE);
 
 
 /*! @brief All I2C requests are put in a queue and exectued in order. When execution is completed 
@@ -27,7 +28,7 @@ void onReceiveI2cCallback(int bytes)
   }
   i2cMessageQueue.push_back(i2cMessage);
 
-  if(i2cMessageQueue.count() >= i2cMessageQueueSize)
+  if(i2cMessageQueue.count() >= I2C_MESSAGE_QUEUE_SIZE)
   {
     Serial.println("ERROR! Request queue overflow! Request dropped!");
   }
