@@ -30,13 +30,30 @@ namespace arduinoIf
 enum class arduinoMessageType
 { 
 	NO_MESSAGE,
-	MOVE_TRACKS_MESSAGE
+	MOVE_TRACKS_MESSAGE,
+	MOVE_ARM_MESSAGE,
+	MOVE_CLAW_MESSAGE
 };
 
 struct MoveTracksMessage
 {
 	char leftTrackSpeed;
 	char rightTrackSpeed;
+};
+
+struct MoveArmMessage
+{
+	char xcm;
+	char xmm;
+	char ycm;
+	char ymm;
+	char zcm;
+	char zmm;
+};
+
+struct MoveClawMessage
+{
+	char state;//0 or 1, open or closed.
 };
 
 

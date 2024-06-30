@@ -14,6 +14,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import androidx.lifecycle.ViewModelProvider
 import com.example.victor.victorCommunication.*
+import android.os.Handler
+import android.os.Looper
 
 
 
@@ -26,22 +28,11 @@ class homeFragment : Fragment(), JoystickView.JoystickListener {
     private lateinit var _sharedViewModel: SharedViewModel
     private lateinit var _victorClient: VictorClient
 
-    //seekBar coordinate limits
-    private val _minX = -400
-    private val _midX = 0
-    private val _maxX = 400
-
-    private val _minY = -200
-    private val _midY = 190
-    private val _maxY = 400
-
-    private val _minZ = -200
-    private val _midZ = 150
-    private val _maxZ = 400
-
-    private var _armX = _midX
-    private var _armY = _midY
-    private var _armZ = _midZ
+    //The initial state of victor
+    var _moveArmMessage = MoveArmMessage(0,0,19,0,15,0)
+    var _armStateUpdated = false
+    var _clawState = false
+    var _clawStateUpdated = false
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -65,58 +56,61 @@ class homeFragment : Fragment(), JoystickView.JoystickListener {
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
 
-        binding.editTextText.setText("x = $_armX, y = $_armY, z = $_armZ,")
+        binding.grabButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                _clawState = !_clawState
+                _clawStateUpdated = false
+            }
+        }
 
-        binding.seekBarX.min = _minX
-        binding.seekBarX.progress = _midX
-        binding.seekBarX.max = _maxX
+        //Initialize and define the coordinate limits for the arm movement.
+        binding.editTextText.setText("x = ${_moveArmMessage.xcm*10+_moveArmMessage.xmm}, y = ${_moveArmMessage.ycm*10+_moveArmMessage.ymm}, z = ${_moveArmMessage.zcm*10+_moveArmMessage.zmm}")
+        binding.seekBarX.min = -400
+        binding.seekBarX.progress = _moveArmMessage.xcm*10+_moveArmMessage.xmm
+        binding.seekBarX.max = 400
+        binding.seekBarY.min = -200
+        binding.seekBarY.progress = _moveArmMessage.ycm*10+_moveArmMessage.ymm
+        binding.seekBarY.max = 400
+        binding.seekBarZ.min = -200
+        binding.seekBarZ.progress = _moveArmMessage.zcm*10+_moveArmMessage.zmm
+        binding.seekBarZ.max = 400
+
         binding.seekBarX.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                _armX = progress
-                binding.editTextText.setText("x = $_armX, y = $_armY, z = $_armZ,")
-                val message = MoveArmMessage(_armX, _armY, _armZ)
-                CoroutineScope(Dispatchers.Main).launch {
-                    _victorClient.send(message.toString())
-                }
+                _moveArmMessage.xcm = progress/10
+                _moveArmMessage.xmm = progress%10
+                _armStateUpdated = false
+                binding.editTextText.setText("x = ${_moveArmMessage.xcm*10+_moveArmMessage.xmm}, y = ${_moveArmMessage.ycm*10+_moveArmMessage.ymm}, z = ${_moveArmMessage.zcm*10+_moveArmMessage.zmm}")
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) { }
         })
 
-        binding.seekBarY.min = _minY
-        binding.seekBarY.progress = _midY
-        binding.seekBarY.max = _maxY
         binding.seekBarY.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                _armY = progress
-                binding.editTextText.setText("x = $_armX, y = $_armY, z = $_armZ,")
-                val message = MoveArmMessage(_armX, _armY, _armZ)
-                CoroutineScope(Dispatchers.Main).launch {
-                    _victorClient.send(message.toString())
-                }
+                _moveArmMessage.ycm = progress/10
+                _moveArmMessage.ymm = progress%10
+                _armStateUpdated = false
+                binding.editTextText.setText("x = ${_moveArmMessage.xcm*10+_moveArmMessage.xmm}, y = ${_moveArmMessage.ycm*10+_moveArmMessage.ymm}, z = ${_moveArmMessage.zcm*10+_moveArmMessage.zmm}")
+
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) { }
         })
 
-        binding.seekBarZ.min = _minZ
-        binding.seekBarZ.progress = _midZ
-        binding.seekBarZ.max = _maxZ
         binding.seekBarZ.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                _armZ = progress
-                binding.editTextText.setText("x = $_armX, y = $_armY, z = $_armZ,")
-                val message = MoveArmMessage(_armX, _armY, _armZ)
-                CoroutineScope(Dispatchers.Main).launch {
-                    _victorClient.send(message.toString())
-                }
+                _moveArmMessage.zcm = progress/10
+                _moveArmMessage.zmm = progress%10
+                _armStateUpdated = false
+                binding.editTextText.setText("x = ${_moveArmMessage.xcm*10+_moveArmMessage.xmm}, y = ${_moveArmMessage.ycm*10+_moveArmMessage.ymm}, z = ${_moveArmMessage.zcm*10+_moveArmMessage.zmm}")
+
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) { }
         })
 
-
-
+        moveArmMessageHandler.post(moveArmMessageRunnable)
 
         val joystickView: JoystickView = view.findViewById(R.id.joystickView)
         joystickView.setJoystickListener(this)
@@ -136,6 +130,32 @@ class homeFragment : Fragment(), JoystickView.JoystickListener {
             _victorClient.send(message.toString())
         }
     }
+
+
+    private val moveArmMessageHandler = Handler(Looper.getMainLooper())
+    private val moveArmMessageRunnable = object : Runnable {
+
+        override fun run() {
+            if(!_armStateUpdated){
+                _armStateUpdated = true
+                CoroutineScope(Dispatchers.Main).launch {
+                    _victorClient.send(_moveArmMessage.toString())
+                }
+            }
+            if(!_clawStateUpdated){
+                _clawStateUpdated = true
+                CoroutineScope(Dispatchers.Main).launch {
+                    if(_clawState){
+                        _victorClient.send(MoveClawMessage(1).toString())
+                    }else{
+                        _victorClient.send(MoveClawMessage(0).toString())
+                    }
+                }
+            }
+            moveArmMessageHandler.postDelayed(this, 50)
+        }
+    }
+
 
     /* The connectVictorClient method initialises the _sharedViewModel with the VictorClient instance,
       which is used to communicate with victor. This is done so that the VictorClient instance can

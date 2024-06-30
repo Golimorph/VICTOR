@@ -29,7 +29,7 @@
 #define MAX_PACKETSIZE 32
 
 //SERVO CONTROLS
-#define NUMBER_OF_SERVOS 16
+#define NUMBER_OF_SERVOS 12
 
 #define SERVOMIN 125
 #define SERVOMAX 625
@@ -119,7 +119,8 @@ public:
      * @param angle the new angle for the servo
      * @param time the time in ms it shall take for the servo to reach the new position (i.e. speed of the movement)*/
     void moveServo(const int servoNumber, const double angle, const int time);
-    
+  
+  
     /*! @brief set the speed of the two tracks of victor
      * speedA left track speed
      * speedB right track speed*/
@@ -129,6 +130,12 @@ public:
     int getMotorPosLeft();
     int getMotorPosRight();
     int getPWM(int servoNumber);
+
+    /*! @brief perform a simple nodding gesture of the US sensor to show 
+     * that initialization succedded, only run this in setup(), as it 
+     * is a blocking call */
+    void indInitCompleted();
+
     
     /*! @brief this void is called once in each arduino loop and ensures that each 
      * servo is moving toward the desired PWM with the speed millisecondsPerStep
@@ -153,9 +160,9 @@ private:
     //State variables:
     int currentPWMs[NUMBER_OF_SERVOS]; //The current position of each servo
     int desiredPWMs[NUMBER_OF_SERVOS]; //The desired position of each servo
-    unsigned int millisecondsPerPWMStep[NUMBER_OF_SERVOS] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};//The speed of each servo, can be positive or negative.
-    unsigned long lastPWMupdateTime[NUMBER_OF_SERVOS] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};//The time in ms from arduino start when each servo was updated.
-    bool errorPrinted = false;
+    unsigned int millisecondsPerPWMStep[NUMBER_OF_SERVOS] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};//The speed of each servo, can be positive or negative.
+    unsigned long lastPWMupdateTime[NUMBER_OF_SERVOS] = {0,0,0,0,0,0,0,0,0,0,0,0};//The time in ms from arduino start when each servo was updated.
+
 
 
     int m_positionMotorHallRight = 0; //Motors Hall sensors

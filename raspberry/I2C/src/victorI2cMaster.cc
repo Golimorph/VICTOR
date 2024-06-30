@@ -46,9 +46,9 @@ std::vector<uint8_t> VictorI2cMaster::extractMessageData(const std::string& inpu
 
 bool VictorI2cMaster::isValid(arduinoIf::arduinoMessageType arduinoMessage, std::vector<uint8_t> totalMessage)
 {
-    if(m_arduinoMessageSizeMap.at(arduinoIf::arduinoMessageType::MOVE_TRACKS_MESSAGE)!=totalMessage.size())
+    if(m_arduinoMessageSizeMap.at(arduinoMessage)!=totalMessage.size())
     {
-        std::cerr<<"The message size is invalid, expected " << m_arduinoMessageSizeMap.at(arduinoIf::arduinoMessageType::MOVE_TRACKS_MESSAGE) << " bytes, " << " but only managed to parse " << totalMessage.size() << "bytes from the string (message type included)\n";   
+        std::cerr<<"The message size is invalid, expected " << m_arduinoMessageSizeMap.at(arduinoMessage) << " bytes, " << " but only managed to parse " << totalMessage.size() << "bytes from the string (message type included)\n";   
         return false;
     }
     return true;
@@ -58,10 +58,14 @@ bool VictorI2cMaster::isValid(arduinoIf::arduinoMessageType arduinoMessage, std:
 VictorI2cMaster::VictorI2cMaster()
 {
     m_messageStringEnumMap = {
-        {"MoveTracksMessage", arduinoIf::arduinoMessageType::MOVE_TRACKS_MESSAGE}
+        {"MoveTracksMessage", arduinoIf::arduinoMessageType::MOVE_TRACKS_MESSAGE},
+        {"MoveArmMessage", arduinoIf::arduinoMessageType::MOVE_ARM_MESSAGE},
+        {"MoveClawMessage", arduinoIf::arduinoMessageType::MOVE_CLAW_MESSAGE}
     };
     m_arduinoMessageSizeMap = {
-        {arduinoIf::arduinoMessageType::MOVE_TRACKS_MESSAGE, 3}
+        {arduinoIf::arduinoMessageType::MOVE_TRACKS_MESSAGE, 3},
+        {arduinoIf::arduinoMessageType::MOVE_ARM_MESSAGE, 7},
+        {arduinoIf::arduinoMessageType::MOVE_CLAW_MESSAGE, 2}
     };
 
 	init();

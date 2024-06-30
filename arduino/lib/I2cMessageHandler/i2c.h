@@ -4,7 +4,7 @@
 
 #include <Wire.h>
 
-#define I2C_MESSAGE_QUEUE_SIZE 5
+#define I2C_MESSAGE_QUEUE_SIZE 20
 
 namespace i2c
 {

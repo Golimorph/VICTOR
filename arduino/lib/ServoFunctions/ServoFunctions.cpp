@@ -26,7 +26,7 @@ void ServoFunctions::setup()
 {
     adafruit_PWMServoDriver=Adafruit_PWMServoDriver::Adafruit_PWMServoDriver();
     adafruit_PWMServoDriver.begin();
-    adafruit_PWMServoDriver.setPWMFreq(60);
+    adafruit_PWMServoDriver.setPWMFreq(60);//DO NOT CHANGE!!
 
     setPWM(USERVO_X,USERVOMID_X);
     setPWM(USERVO_Y,USERVOMID_Y);
@@ -218,37 +218,44 @@ bool ServoFunctions::moveArm(const double x, const double y, const double z, con
 
     if(!m_inverseKinematics.solve(shoulderServoAngle, elbowServoAngle, rotAngle, x, y, z))
     {
-        Serial.println("Could not move to desired location: (" + String(x) + ", " + String(y) + ", " + String(z) + ").");
         return false;
     }
-    
+
     moveServo(ROTSERVO, rotAngle, time);
     moveServo(SHOULDERSERVORIGHT, shoulderServoAngle, time);
     moveServo(ELBOWSERVO, elbowServoAngle , time);
-    
+
     return true;
 }
+
+
 
 
 void ServoFunctions::moveServo(const int servoNumber, const double angle, const int time)
 {
 	int desiredPWM = angleToPWM(servoNumber,angle);
-    int numberOfPWMsteps = abs(desiredPWM-currentPWMs[servoNumber]);
 
-    if(numberOfPWMsteps == 0)
-    {   
-        //In case there is no change in servo position, return directly.
-        return;
+    if(time == 0)
+    {
+        desiredPWMs[servoNumber] = desiredPWM;
+        currentPWMs[servoNumber] = desiredPWM;
+        setPWM(servoNumber, desiredPWM);
+    }else
+    {
+        int numberOfPWMsteps = abs(desiredPWM-currentPWMs[servoNumber]);
+        if(numberOfPWMsteps < 2)
+        {   
+            //In case there is no change in servo position, return directly.
+            return;
+        }
+        millisecondsPerPWMStep[servoNumber] = time/numberOfPWMsteps;
+        desiredPWMs[servoNumber] = desiredPWM;
     }
-    
-    millisecondsPerPWMStep[servoNumber] = time/numberOfPWMsteps;
-    desiredPWMs[servoNumber] = desiredPWM;
 }
+
 
 void ServoFunctions::refresh()
 {
-
-    int deltaPWM = desiredPWMs[SHOULDERSERVORIGHT]-currentPWMs[SHOULDERSERVORIGHT];
     updateServoPositions();
 }
 
@@ -258,16 +265,21 @@ void ServoFunctions::updateServoPositions()
 
     for(int servoNumber = 0; servoNumber < NUMBER_OF_SERVOS; ++servoNumber)
     { 
-        bool waitCompleted = (time - lastPWMupdateTime[servoNumber]) > millisecondsPerPWMStep[servoNumber];
         int deltaPWM = desiredPWMs[servoNumber]-currentPWMs[servoNumber];
         
-        if(waitCompleted && abs(deltaPWM)>1)
+        if(servoNumber != SHOULDERSERVOLEFT && abs(deltaPWM)>2)
         {
-            lastPWMupdateTime[servoNumber] = time;   
-            if(!setPWM(servoNumber, currentPWMs[servoNumber] + 2*(deltaPWM > 0) - 1) && !errorPrinted)
+            if((time - lastPWMupdateTime[servoNumber]) > millisecondsPerPWMStep[servoNumber])
             {
-                Serial.println("Could not set desired PWM on servo " + String(servoNumber) + ", closest value is set automatically.");
-                errorPrinted = true;
+                lastPWMupdateTime[servoNumber] = time;
+
+                if(deltaPWM > 0)
+                {
+                    setPWM(servoNumber, currentPWMs[servoNumber] + 1);
+                }else
+                {
+                    setPWM(servoNumber, currentPWMs[servoNumber] - 1);
+                }
             }
         }
     }
@@ -298,5 +310,18 @@ void ServoFunctions::setMotorSpeed(int speedA, int speedB)
         digitalWrite(DIRB,HIGH);
     }
     analogWrite(PWMB, std::min(abs(speedB),maxSpeed));
+}
+
+
+
+
+
+void ServoFunctions::indInitCompleted()
+{
+    setPWM(USERVO_Y,USERVOMAX_Y);
+    delay(300);
+    setPWM(USERVO_Y,USERVOMIN_Y);
+    delay(300);
+    setPWM(USERVO_Y,USERVOMID_Y);
 }
 

@@ -37,5 +37,4 @@ private:
 	static constexpr uint8_t DEVICE_ID = 0x09;
 	std::map<std::string, arduinoIf::arduinoMessageType> m_messageStringEnumMap;//The caller provides a string for the message, but in I2C an enum is used as it is less bug prone.
 	std::map<arduinoIf::arduinoMessageType, uint8_t> m_arduinoMessageSizeMap;//The number of bytes to be sent over I2C for each message.
-
 };

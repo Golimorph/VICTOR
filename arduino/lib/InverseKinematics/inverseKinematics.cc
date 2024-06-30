@@ -54,7 +54,7 @@ bool InverseKinematics::solve(double &a, double &b, double &theta, double x, dou
     		return true;
     	}
     }
-    Serial.println("Failed to solve InverseKinematics!, "+String(a)+", "+String(b));
+    //Serial.println("Failed to solve InverseKinematics!, "+String(a)+", "+String(b));
     return false;
 }
 
@@ -75,8 +75,8 @@ bool InverseKinematics::isInRange(double a, double b)
 //returns true if a solution is found, solution in the a,b reference arguments. Radians.
 bool InverseKinematics::newtonRaphsonSolver(double &a, double &b, double r, double z) 
 {
-	const double TOLERANCE = 1e-3;//We dont need better tolerance than this, the servos are not so precise anyway.
-    const int MAX_ITERATIONS = 50;
+	const double TOLERANCE = 1e-3;//I dont need better tolerance than this, the servos are not so precise anyway.
+    const int MAX_ITERATIONS = 30;
 
     //The sin/cos/solver work with radians need to convert.
     a = a*M_PI/180;
@@ -95,7 +95,7 @@ bool InverseKinematics::newtonRaphsonSolver(double &a, double &b, double r, doub
 
         if (fabs(det) < 1e-10) {
             // The Jacobian determinant is too small, likely a singular matrix
-            Serial.println("Jacobian determinant is too small, stopping.");
+            //Serial.println("Jacobian determinant is too small, stopping.");
             return false;
         }
 
