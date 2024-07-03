@@ -152,7 +152,7 @@ class homeFragment : Fragment(), JoystickView.JoystickListener {
                     }
                 }
             }
-            moveArmMessageHandler.postDelayed(this, 50)
+            moveArmMessageHandler.postDelayed(this, 10)
         }
     }
 

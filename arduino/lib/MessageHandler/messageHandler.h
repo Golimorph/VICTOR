@@ -4,10 +4,10 @@
 #include <arduinoIf.h>
 #include <ServoFunctions.h>
 
-class I2cMessageHandler
+class MessageHandler
 {
 public: 
-	I2cMessageHandler(ServoFunctions& sf);
+	MessageHandler(ServoFunctions& sf);
 
 	bool handleMessage(std::vector<uint8_t> message);
 private:

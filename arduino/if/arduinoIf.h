@@ -24,6 +24,12 @@ The arduino then goes back to the state of waiting for a new message, which can 
 #pragma once
 
 
+#define SIZE_NO_MESSAGE 1
+#define SIZE_MOVE_TRACKS_MESSAGE 3
+#define SIZE_MOVE_ARM_MESSAGE 7
+#define SIZE_MOVE_CLAW_MESSAGE 2
+
+
 namespace arduinoIf
 {
 

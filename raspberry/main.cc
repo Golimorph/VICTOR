@@ -1,24 +1,28 @@
 //created by Richard Edberg 2024
-#include "victorI2cMaster.h"
 #include <string>
 #include "victorServer.h"
+#include "victorUart.h"
+#include <iostream>
 
 
 
 
 int main() 
 {
-    std::cerr<<"started\n";
-    VictorI2cMaster victorI2cMaster;
-    VictorServer victorServer(std::bind(&VictorI2cMaster::send, &victorI2cMaster, std::placeholders::_1));
-    victorServer.startI2Cforwarding();
+    std::cerr<<"raspberry: started\n";
+    VictorUart victorUart("/dev/ttyUSB0");
+    victorUart.startPrintToConsole();
 
+    std::this_thread::sleep_for(std::chrono::milliseconds(4000));
+
+    //std::string exampleMessage = "MoveTracksMessage(leftTrackSpeed=72, rightTrackSpeed=72)";
+    //victorUart.send(exampleMessage);
+
+    VictorServer victorServer(std::bind(&VictorUart::send, &victorUart, std::placeholders::_1));
+    victorServer.startI2Cforwarding();
 
     return 0;
 }
-
-
-
 
 
 

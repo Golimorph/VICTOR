@@ -5,42 +5,40 @@
 #include <ServoFunctions.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <i2cMessageHandler.h>
+#include <messageHandler.h>
 #include <deque.h>
-#include <i2c.h>
+#include <uart.h>
 
 ServoFunctions sf;
-I2cMessageHandler i2cHandler(sf);
+MessageHandler messageHandler(sf);
 InverseKinematics inverseKinematics;
-unsigned long msTime;
-
-
 
 void setup() 
 {
-Serial.begin(9600); //terminal print
-sf.setup();
-i2c::initI2C();
-Serial.println("Initialization successful!");
-sf.indInitCompleted();//nodd the US sensor to show init completed.
-}
+  Serial.begin(9600);
+  sf.setup();
+  //i2c::initI2C();
+  Serial.println("Initialization successful!");
+  sf.indInitCompleted();//nodd the US sensor to show init completed.
 
-void handleI2cRequests()
-{ 
-  if(i2c::i2cMessageQueue.count() > 0)
-  {
-    std::vector<uint8_t> message = i2c::i2cMessageQueue.pop_front();
-    i2cHandler.handleMessage(message);
+  while (Serial.available() > 0) {
+    Serial.read(); // Read and discard any incoming data
   }
 }
 
-unsigned long int lastTime = 0;
-int y = 150;
-int increment = 1;
+void handleUartRequests()
+{ 
+  if(uart::uartMessageQueue.count() > 0)
+  {
+    std::vector<uint8_t> message = uart::uartMessageQueue.pop_front();
+    messageHandler.handleMessage(message);
+  }
+}
 
 void loop() 
 { 
-  handleI2cRequests();
+  uart::checkInbox();
+  handleUartRequests();
   sf.refresh();
 }
 

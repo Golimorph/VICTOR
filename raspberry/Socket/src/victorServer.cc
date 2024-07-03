@@ -2,11 +2,11 @@
 
 VictorServer::VictorServer(CallbackType callback)
 {	
-	m_i2cCallback = callback;
+	m_callback = callback;
 	if(initializeSocket())
 	{
 		std::cout<<"Socket between victor and android/desktop device initialized successfully!\n";
-	}	
+	}
 }
 
 
@@ -57,16 +57,10 @@ void VictorServer::startI2Cforwarding()
         {
         	/*Sometimes several messages are sent in the same buffer, so need to split them and send them
         	separately over I2C. Hence this for loop. Instead of sending the buffer directly.*/
-        	std::cerr << message << "\n";
-        	m_i2cCallback(message);
+            m_callback(message);
     	}
     }
 }
-
-
-
-
-
 
 bool VictorServer::initializeSocket()
 {

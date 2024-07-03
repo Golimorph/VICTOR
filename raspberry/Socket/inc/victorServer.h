@@ -11,6 +11,8 @@
 #include <functional>
 #include <sstream>
 #include "lights.h"
+#include <deque>
+#include <thread>
 
 #define PORT 8080
 
@@ -22,7 +24,7 @@ public:
 	~VictorServer();
 	void startI2Cforwarding();
 private:
-	CallbackType m_i2cCallback;
+	CallbackType m_callback;
 	bool initializeSocket();
 	std::vector<std::string> splitString(const std::string &str);
 	int m_socket;

@@ -1,12 +1,12 @@
 //created by Richard Edberg 2024
-#include "i2cMessageHandler.h"
+#include "messageHandler.h"
 
-I2cMessageHandler::I2cMessageHandler(ServoFunctions& sf)
+MessageHandler::MessageHandler(ServoFunctions& sf)
 {
 	m_sf = &sf; 
 }
 
-bool I2cMessageHandler::handleMessage(std::vector<uint8_t> message)
+bool MessageHandler::handleMessage(std::vector<uint8_t> message)
 {
 	if(message.size() < 1)
 	{
@@ -29,7 +29,7 @@ bool I2cMessageHandler::handleMessage(std::vector<uint8_t> message)
 	return false;
 }
 
-bool I2cMessageHandler::handleMoveTracksMessage(std::vector<uint8_t> message)
+bool MessageHandler::handleMoveTracksMessage(std::vector<uint8_t> message)
 {
 	arduinoIf::MoveTracksMessage messageStruct;
 	messageStruct.leftTrackSpeed = static_cast<int8_t>(message[1]);
@@ -39,7 +39,7 @@ bool I2cMessageHandler::handleMoveTracksMessage(std::vector<uint8_t> message)
 }
 
 
-bool I2cMessageHandler::handleMoveArmMessage(std::vector<uint8_t> message)
+bool MessageHandler::handleMoveArmMessage(std::vector<uint8_t> message)
 {
 	arduinoIf::MoveArmMessage moveArmMessage;
 	moveArmMessage.xcm = static_cast<int8_t>(message[1]);
@@ -57,7 +57,7 @@ bool I2cMessageHandler::handleMoveArmMessage(std::vector<uint8_t> message)
 	return m_sf->moveArm(x, y, z, t); 
 }
 
-bool I2cMessageHandler::handleMoveClawMessage(std::vector<uint8_t> message)
+bool MessageHandler::handleMoveClawMessage(std::vector<uint8_t> message)
 {
 	arduinoIf::MoveClawMessage moveClawMessage;
 	moveClawMessage.state = static_cast<int8_t>(message[1]);
