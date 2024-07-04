@@ -23,22 +23,25 @@ The arduino then goes back to the state of waiting for a new message, which can 
 
 #pragma once
 
-
+//Size includes the message type byte at the beginning of the message.
 #define SIZE_NO_MESSAGE 1
 #define SIZE_MOVE_TRACKS_MESSAGE 3
 #define SIZE_MOVE_ARM_MESSAGE 7
 #define SIZE_MOVE_CLAW_MESSAGE 2
+#define SIZE_MOVE_CLAW_ANGLE_MESSAGE 4
 
 
 namespace arduinoIf
 {
 
+//Remember to update uart.h,messageHandler.h and victorUart.h if add new messages.
 enum class arduinoMessageType
 { 
 	NO_MESSAGE,
 	MOVE_TRACKS_MESSAGE,
 	MOVE_ARM_MESSAGE,
-	MOVE_CLAW_MESSAGE
+	MOVE_CLAW_MESSAGE,
+	MOVE_CLAW_ANGLE_MESSAGE
 };
 
 struct MoveTracksMessage
@@ -60,6 +63,14 @@ struct MoveArmMessage
 struct MoveClawMessage
 {
 	char state;//0 or 1, open or closed.
+};
+
+struct MoveClawAngleMessage
+{
+	//vector pointing in the direction of the claw.
+	char x;
+	char y;
+	char z;
 };
 
 

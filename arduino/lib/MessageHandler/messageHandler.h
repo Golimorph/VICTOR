@@ -14,6 +14,7 @@ private:
 	bool handleMoveTracksMessage(std::vector<uint8_t> message);
 	bool handleMoveArmMessage(std::vector<uint8_t> message);
 	bool handleMoveClawMessage(std::vector<uint8_t> message);
+	bool handleMoveClawAngleMessage(std::vector<uint8_t> message);
 
 	ServoFunctions* m_sf;
 };

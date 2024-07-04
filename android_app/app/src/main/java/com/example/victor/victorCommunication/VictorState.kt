@@ -172,7 +172,7 @@ class VictorState {
                 }
                 _clawAngleStateChanged = false
             }
-            moveArmMessageHandler.postDelayed(this, 10)
+            moveArmMessageHandler.postDelayed(this, 15)
         }
     }
 }

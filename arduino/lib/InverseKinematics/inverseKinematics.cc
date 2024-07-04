@@ -25,6 +25,20 @@ InverseKinematics::InverseKinematics()
     m_b_limits[1] = 80;//max degrees
 } 
 
+bool InverseKinematics::getClawAngle(double &omega, double &psi, double x, double y, double z)
+{
+    double apb = (lastSolution[0]+lastSolution[1])*M_PI/180;
+
+    omega = acos(cos(apb)*y-sin(apb)*z);
+    psi = asin(-(sin(apb)*y+cos(apb)*z)/sin(omega));
+
+
+    omega *= 180/M_PI;
+    psi *= 180/M_PI;
+    return true;
+}
+
+
 bool InverseKinematics::solve(double &a, double &b, double &theta, double x, double y, double z)
 {
     //horizontal radial distance to target.

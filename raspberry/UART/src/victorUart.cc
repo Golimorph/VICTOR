@@ -14,12 +14,14 @@ VictorUart::VictorUart(const std::string& portName)
     m_messageStringEnumMap = {
         {"MoveTracksMessage", arduinoIf::arduinoMessageType::MOVE_TRACKS_MESSAGE},
         {"MoveArmMessage", arduinoIf::arduinoMessageType::MOVE_ARM_MESSAGE},
-        {"MoveClawMessage", arduinoIf::arduinoMessageType::MOVE_CLAW_MESSAGE}
+        {"MoveClawMessage", arduinoIf::arduinoMessageType::MOVE_CLAW_MESSAGE},
+        {"MoveClawAngleMessage", arduinoIf::arduinoMessageType::MOVE_CLAW_ANGLE_MESSAGE}
     };
     m_arduinoMessageSizeMap = {
         {arduinoIf::arduinoMessageType::MOVE_TRACKS_MESSAGE, SIZE_MOVE_TRACKS_MESSAGE},
         {arduinoIf::arduinoMessageType::MOVE_ARM_MESSAGE, SIZE_MOVE_ARM_MESSAGE},
-        {arduinoIf::arduinoMessageType::MOVE_CLAW_MESSAGE, SIZE_MOVE_CLAW_MESSAGE}
+        {arduinoIf::arduinoMessageType::MOVE_CLAW_MESSAGE, SIZE_MOVE_CLAW_MESSAGE},
+        {arduinoIf::arduinoMessageType::MOVE_CLAW_ANGLE_MESSAGE, SIZE_MOVE_CLAW_ANGLE_MESSAGE},
     };
 
     fd = open(portName.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
@@ -156,10 +158,13 @@ bool VictorUart::send(std::string message)
         return false;
     }
 
+    std::cerr << "Raspberry: sending Message: ";
     for(uint8_t &byte : totalMessage)
     {
+        std::cerr << static_cast<int>(byte) << ", ";
         sendByte(byte);
     }
+    std::cerr << "\n";
 
     return true;
 }

@@ -211,6 +211,20 @@ bool ServoFunctions::setPWM(const int servoNumber, const int value)
 }
 
 
+bool ServoFunctions::moveClawAngle(const double x, const double y, const double z, const int time)
+{
+    double omega,psi;
+    if(!m_inverseKinematics.getClawAngle(omega, psi, x,y,z))
+    {
+        return false;
+    }
+
+    moveServo(UNDERARMROTSERVO, psi, time);
+    moveServo(WRISTUPSERVO, omega, time);
+    
+    return true;
+}
+
 
 bool ServoFunctions::moveArm(const double x, const double y, const double z, const int time)
 {
