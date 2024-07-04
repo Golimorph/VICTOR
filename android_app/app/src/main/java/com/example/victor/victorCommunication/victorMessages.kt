@@ -12,3 +12,6 @@ data class MoveArmMessage(var xcm: Int, var xmm: Int, var ycm: Int, var ymm: Int
 
 /* Message to open or close the claw 1 closed, 0 open */
 data class MoveClawMessage(var state: Int) {}
+
+/* Change the angle of the claw. The data is a vector x,y,z of length 125 (normalize needed as Int is not so good) */
+data class MoveClawAngleMessage(val x: Int, val y: Int, val z: Int) {}

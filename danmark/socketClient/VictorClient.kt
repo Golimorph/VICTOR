@@ -22,16 +22,25 @@ class VictorClient(
     private var m_socket: Socket? = null
     private var m_outputStream: OutputStream? = null
     private val mutex = Mutex()
+    private var _connected = false
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 m_socket = Socket(m_serverAddress, m_port)
                 m_outputStream = m_socket!!.getOutputStream()
+                _connected = true
             } catch (e: Exception) {
                 e.printStackTrace()
+                _connected = false
             }
         }
+    }
+
+
+
+    fun isConnected(): Boolean{
+        return _connected
     }
 
     /**
@@ -44,7 +53,7 @@ class VictorClient(
             withContext(Dispatchers.IO) {
                 try {
                     println("Sending to victor: $data")
-                    m_outputStream?.write((data+";").toByteArray())
+                    m_outputStream?.write((data + ";").toByteArray())
                     m_outputStream?.flush()
                 } catch (e: Exception) {
                     e.printStackTrace()
