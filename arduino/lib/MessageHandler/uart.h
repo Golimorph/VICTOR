@@ -30,14 +30,19 @@ void checkInbox()
 		switch(messageType)
 		{
 			case static_cast<uint8_t>(arduinoIf::arduinoMessageType::MOVE_TRACKS_MESSAGE):
-				messageSize = 3;
+				messageSize = SIZE_MOVE_TRACKS_MESSAGE;
 				break;
 			case static_cast<uint8_t>(arduinoIf::arduinoMessageType::MOVE_ARM_MESSAGE):
-				messageSize = 7;
+				messageSize = SIZE_MOVE_ARM_MESSAGE;
 				break;
 			case static_cast<uint8_t>(arduinoIf::arduinoMessageType::MOVE_CLAW_MESSAGE):
-				messageSize = 2;
+				messageSize = SIZE_MOVE_CLAW_MESSAGE;
 				break;
+			case static_cast<uint8_t>(arduinoIf::arduinoMessageType::MOVE_CLAW_ANGLE_MESSAGE):
+				messageSize = SIZE_MOVE_CLAW_ANGLE_MESSAGE;
+				break;
+			default:
+				Serial.println("MessageHandler/uart.h: unknown message received by Arduino.");
 		} 
 
 		while(uartMessage.size() < messageSize)

@@ -103,6 +103,13 @@ public:
     void setup();
 
 
+
+    /*! @brief Point the claw in different directions.
+     * @param x,y,z a unit vector pointing in the direction the claw should point
+     * @param time, the time it shall take to complete the move to the new coordinates [ms]*/
+    bool moveClawAngle(const double x, const double y, const double z, const int time);
+    
+
     /*! @brief move the arm to coordinates x,y,z relative to the
      * center of victor.
      * @param x distance to the right of victor center[mm]
