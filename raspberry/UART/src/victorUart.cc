@@ -158,10 +158,13 @@ bool VictorUart::send(std::string message)
         return false;
     }
 
+    std::cerr << "Raspberry: sending Message: ";
     for(uint8_t &byte : totalMessage)
     {
+        std::cerr << static_cast<int>(byte) << ", ";
         sendByte(byte);
     }
+    std::cerr << "\n";
 
     return true;
 }
