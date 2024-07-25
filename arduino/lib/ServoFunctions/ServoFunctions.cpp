@@ -114,7 +114,7 @@ int ServoFunctions::angleToPWM(const int servoNumber, const double angle) const
     case UNDERARMROTSERVO: 
         return int(angle*2.48 + 0.5) + UNDERARMROTSERVO_MID;
     case WRISTUPSERVO: 
-        return int(angle*2.48 + 0.5) + WRISTUPSERVO_MID;
+        return int(0.5 - angle*2.48) + WRISTUPSERVO_MID;
     case WRISTTWISTSERVO: 
         return int(angle*2.48 + 0.5) + WRISTTWISTSERVO_MID;
     case CLAWSERVO: 
@@ -210,61 +210,20 @@ bool ServoFunctions::setPWM(const int servoNumber, const int value)
     }
 }
 
-
-bool ServoFunctions::moveClawAngle(const double x, const double y, const double z, const int time)
+bool ServoFunctions::moveArm(const double a, const double b, const double c, const double d, const double e, const double f, const int time)
 {
-    double omega,psi;
-    if(!m_inverseKinematics.getClawAngle(omega, psi, x,y,z))
-    {
-        return false;
-    }
-
-    moveServo(UNDERARMROTSERVO, psi, time);
-    moveServo(WRISTUPSERVO, omega, time);
-    
+    moveServo(ROTSERVO, a, time);
+    moveServo(SHOULDERSERVORIGHT, b, time);
+    moveServo(ELBOWSERVO, c, time);
+    moveServo(UNDERARMROTSERVO, d, time);
+    moveServo(WRISTUPSERVO, e, time);
+    moveServo(WRISTTWISTSERVO, f, time);
     return true;
 }
-
-
-bool ServoFunctions::moveArm(const double x, const double y, const double z, const int time)
-{
-    double shoulderServoAngle,elbowServoAngle,rotAngle;
-
-    if(!m_inverseKinematics.solve(shoulderServoAngle, elbowServoAngle, rotAngle, x, y, z))
-    {
-        return false;
-    }
-
-    moveServo(ROTSERVO, rotAngle, time);
-    moveServo(SHOULDERSERVORIGHT, shoulderServoAngle, time);
-    moveServo(ELBOWSERVO, elbowServoAngle , time);
-
-    return true;
-}
-
-
-
 
 void ServoFunctions::moveServo(const int servoNumber, const double angle, const int time)
 {
-	int desiredPWM = angleToPWM(servoNumber,angle);
-
-    if(time == 0)
-    {
-        desiredPWMs[servoNumber] = desiredPWM;
-        currentPWMs[servoNumber] = desiredPWM;
-        setPWM(servoNumber, desiredPWM);
-    }else
-    {
-        int numberOfPWMsteps = abs(desiredPWM-currentPWMs[servoNumber]);
-        if(numberOfPWMsteps < 2)
-        {   
-            //In case there is no change in servo position, return directly.
-            return;
-        }
-        millisecondsPerPWMStep[servoNumber] = time/numberOfPWMsteps;
-        desiredPWMs[servoNumber] = desiredPWM;
-    }
+	desiredPWMs[servoNumber] = angleToPWM(servoNumber,angle);
 }
 
 
@@ -277,16 +236,15 @@ void ServoFunctions::updateServoPositions()
 {
     unsigned long time = millis();
 
-    for(int servoNumber = 0; servoNumber < NUMBER_OF_SERVOS; ++servoNumber)
-    { 
-        int deltaPWM = desiredPWMs[servoNumber]-currentPWMs[servoNumber];
-        
-        if(servoNumber != SHOULDERSERVOLEFT && abs(deltaPWM)>2)
-        {
-            if((time - lastPWMupdateTime[servoNumber]) > millisecondsPerPWMStep[servoNumber])
-            {
-                lastPWMupdateTime[servoNumber] = time;
+    if((time - lastPWMupdateTime) > millisecondsPerPWMStep)
+    {
+        lastPWMupdateTime = time;
+        for(int servoNumber = 0; servoNumber < NUMBER_OF_SERVOS; ++servoNumber)
+        { 
+            int deltaPWM = desiredPWMs[servoNumber]-currentPWMs[servoNumber];
 
+            if(servoNumber != SHOULDERSERVOLEFT && abs(deltaPWM)>2)
+            {    
                 if(deltaPWM > 0)
                 {
                     setPWM(servoNumber, currentPWMs[servoNumber] + 1);
@@ -325,10 +283,6 @@ void ServoFunctions::setMotorSpeed(int speedA, int speedB)
     }
     analogWrite(PWMB, std::min(abs(speedB),maxSpeed));
 }
-
-
-
-
 
 void ServoFunctions::indInitCompleted()
 {

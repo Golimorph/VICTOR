@@ -13,12 +13,21 @@ int main()
     VictorUart victorUart("/dev/ttyUSB0");
     victorUart.startPrintToConsole();
 
+
     std::this_thread::sleep_for(std::chrono::milliseconds(4000));
 
-    //std::string exampleMessage = "MoveTracksMessage(leftTrackSpeed=72, rightTrackSpeed=72)";
-    //victorUart.send(exampleMessage);
 
-    VictorServer victorServer(std::bind(&VictorUart::send, &victorUart, std::placeholders::_1));
+    raspberryIf::MoveArmMessage moveArmMessage;
+    moveArmMessage.xcm = 0; 
+    moveArmMessage.xmm = 0;
+    moveArmMessage.ycm = 20;
+    moveArmMessage.ymm = 0;
+    moveArmMessage.zcm = 9;
+    moveArmMessage.zmm = 3;
+    victorUart.doMoveArm(moveArmMessage);
+    
+    
+    VictorServer victorServer(std::bind(&VictorUart::handleMessage, &victorUart, std::placeholders::_1));
     victorServer.startI2Cforwarding();
 
     return 0;

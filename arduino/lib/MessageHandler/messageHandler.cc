@@ -23,8 +23,6 @@ bool MessageHandler::handleMessage(std::vector<uint8_t> message)
 			return handleMoveArmMessage(message);
 		case static_cast<uint8_t>(arduinoIf::arduinoMessageType::MOVE_CLAW_MESSAGE):
 			return handleMoveClawMessage(message);
-		case static_cast<uint8_t>(arduinoIf::arduinoMessageType::MOVE_CLAW_ANGLE_MESSAGE):
-			return handleMoveClawAngleMessage(message);
 		default:
 			return false;
 	} 
@@ -40,23 +38,18 @@ bool MessageHandler::handleMoveTracksMessage(std::vector<uint8_t> message)
 	return true; 
 }
 
-
 bool MessageHandler::handleMoveArmMessage(std::vector<uint8_t> message)
 {
 	arduinoIf::MoveArmMessage moveArmMessage;
-	moveArmMessage.xcm = static_cast<int8_t>(message[1]);
-	moveArmMessage.xmm = static_cast<int8_t>(message[2]);
-	moveArmMessage.ycm = static_cast<int8_t>(message[3]);
-	moveArmMessage.ymm = static_cast<int8_t>(message[4]);
-	moveArmMessage.zcm = static_cast<int8_t>(message[5]);
-	moveArmMessage.zmm = static_cast<int8_t>(message[6]);
+	moveArmMessage.a = static_cast<int8_t>(message[1]);
+	moveArmMessage.b = static_cast<int8_t>(message[2]);
+	moveArmMessage.c = static_cast<int8_t>(message[3]);
+	moveArmMessage.d = static_cast<int8_t>(message[4]);
+	moveArmMessage.e = static_cast<int8_t>(message[5]);
+	moveArmMessage.f = static_cast<int8_t>(message[6]);
 
-	double x = 10*moveArmMessage.xcm + moveArmMessage.xmm;//mm
-	double y = 10*moveArmMessage.ycm + moveArmMessage.ymm;//mm
-	double z = 10*moveArmMessage.zcm + moveArmMessage.zmm;//mm
-	
-	const int t = 10; //Time for move [ms].
-	return m_sf->moveArm(x, y, z, t); 
+	const int t = 0; //Time for move [ms].
+	return m_sf->moveArm(moveArmMessage.a, moveArmMessage.b, moveArmMessage.c, moveArmMessage.d, moveArmMessage.e, moveArmMessage.f, t); 
 }
 
 bool MessageHandler::handleMoveClawMessage(std::vector<uint8_t> message)
@@ -74,45 +67,3 @@ bool MessageHandler::handleMoveClawMessage(std::vector<uint8_t> message)
 	}
 	return true;
 }
-
-bool MessageHandler::handleMoveClawAngleMessage(std::vector<uint8_t> message)
-{
-	arduinoIf::MoveClawAngleMessage moveClawAngleMessage;
-	moveClawAngleMessage.x = static_cast<int8_t>(message[1]);
-	moveClawAngleMessage.y = static_cast<int8_t>(message[2]);
-	moveClawAngleMessage.z = static_cast<int8_t>(message[3]);
-
-	//create a unit vector from the message.
-	double x = static_cast<double>(moveClawAngleMessage.x);
-	double y = static_cast<double>(moveClawAngleMessage.y);
-	double z = static_cast<double>(moveClawAngleMessage.z);
-	if(moveClawAngleMessage.x == 0 && moveClawAngleMessage.y == 0 && moveClawAngleMessage.z == 0)
-	{
-		x = 0;
-		y = 1;
-		z = 0;
-	}else
-	{
-		double norm = sqrt(x*x+y*y+z*z);
-		x = x/norm;
-		y = y/norm;
-		z = z/norm;
-	}
-	const int t = 0; //Time for move [ms].
-	m_sf->moveClawAngle(x, y, z, t);
-
-	return true;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-

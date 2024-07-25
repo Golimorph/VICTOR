@@ -1,7 +1,7 @@
 
 RASPBERY_CPP_REPO = Repository
-RASPBERRY_SRCS = $(RASPBERY_CPP_REPO)/main.cc $(RASPBERY_CPP_REPO)/I2C/src/victorI2cMaster.cc $(RASPBERY_CPP_REPO)/GPIO/src/lights.cc $(RASPBERY_CPP_REPO)/Socket/src/victorServer.cc $(RASPBERY_CPP_REPO)/UART/src/victorUart.cc
-RASPBERRY_INCS = -I $(RASPBERY_CPP_REPO)/I2C/inc/ -I $(RASPBERY_CPP_REPO)/GPIO/inc/ -I $(RASPBERY_CPP_REPO)/Socket/inc/ -I $(RASPBERY_CPP_REPO)/UART/inc/ -I $(RASPBERY_CPP_REPO)/
+RASPBERRY_SRCS = $(RASPBERY_CPP_REPO)/main.cc $(RASPBERY_CPP_REPO)/I2C/src/victorI2cMaster.cc $(RASPBERY_CPP_REPO)/GPIO/src/lights.cc $(RASPBERY_CPP_REPO)/Socket/src/victorServer.cc $(RASPBERY_CPP_REPO)/UART/src/victorUart.cc $(RASPBERY_CPP_REPO)/InverseKinematics/src/inverseKinematics.cc
+RASPBERRY_INCS = -I $(RASPBERY_CPP_REPO)/I2C/inc/ -I $(RASPBERY_CPP_REPO)/GPIO/inc/ -I $(RASPBERY_CPP_REPO)/Socket/inc/ -I $(RASPBERY_CPP_REPO)/UART/inc/ -I $(RASPBERY_CPP_REPO)/InverseKinematics/inc/ -I $(RASPBERY_CPP_REPO)/if -I $(RASPBERY_CPP_REPO)/
 
 
 #build everything and upload it to victor

@@ -1,4 +1,14 @@
-/*interface for communication between victor raspberrypi and victor arduino. 
+#pragma once
+
+//Size includes the message type byte at the beginning of the message.
+#define SIZE_NO_MESSAGE 1
+#define SIZE_MOVE_TRACKS_MESSAGE 3
+#define SIZE_MOVE_ARM_MESSAGE 7
+#define SIZE_MOVE_CLAW_MESSAGE 2
+#define SIZE_MOVE_CLAW_ANGLE_MESSAGE 4
+
+
+/*! @brief interface for communication between victor raspberrypi and victor arduino. 
 The interface consist of a number of tasks that victor can performed number in
 an enum class. The interface is shared between the raspberrypi and the arduino
 
@@ -20,17 +30,6 @@ byte2 = 0x01 -> rightTrackSpeed, whend this 3rd byte is received the message rea
 The arduino then goes back to the state of waiting for a new message, which can also be triggered by sending 0x0 over I2C (NO_MESSAGE).
 
 */ 
-
-#pragma once
-
-//Size includes the message type byte at the beginning of the message.
-#define SIZE_NO_MESSAGE 1
-#define SIZE_MOVE_TRACKS_MESSAGE 3
-#define SIZE_MOVE_ARM_MESSAGE 7
-#define SIZE_MOVE_CLAW_MESSAGE 2
-#define SIZE_MOVE_CLAW_ANGLE_MESSAGE 4
-
-
 namespace arduinoIf
 {
 
@@ -40,8 +39,7 @@ enum class arduinoMessageType
 	NO_MESSAGE,
 	MOVE_TRACKS_MESSAGE,
 	MOVE_ARM_MESSAGE,
-	MOVE_CLAW_MESSAGE,
-	MOVE_CLAW_ANGLE_MESSAGE
+	MOVE_CLAW_MESSAGE
 };
 
 struct MoveTracksMessage
@@ -52,25 +50,17 @@ struct MoveTracksMessage
 
 struct MoveArmMessage
 {
-	char xcm;
-	char xmm;
-	char ycm;
-	char ymm;
-	char zcm;
-	char zmm;
+	char a;
+	char b;
+	char c;
+	char d;
+	char e;
+	char f;
 };
 
 struct MoveClawMessage
 {
 	char state;//0 or 1, open or closed.
-};
-
-struct MoveClawAngleMessage
-{
-	//vector pointing in the direction of the claw.
-	char x;
-	char y;
-	char z;
 };
 
 

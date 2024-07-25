@@ -102,21 +102,16 @@ public:
      * all servos to their default position.*/
     void setup();
 
-
-
-    /*! @brief Point the claw in different directions.
-     * @param x,y,z a unit vector pointing in the direction the claw should point
-     * @param time, the time it shall take to complete the move to the new coordinates [ms]*/
-    bool moveClawAngle(const double x, const double y, const double z, const int time);
-    
-
     /*! @brief move the arm to coordinates x,y,z relative to the
      * center of victor.
-     * @param x distance to the right of victor center[mm]
-     * @param y distance in front of victor center [mm]
-     * @param z distance above victor center [mm]
+     * @param a angle joint at root [degrees]
+     * @param b angle of next joint [degrees]
+     * @param c angle of next joint [degrees]
+     * @param d angle of next joint [degrees]
+     * @param e angle of next joint [degrees]
+     * @param f angle of claw       [degrees]
      * @param time, the time it shall take to complete the move to the new coordinates [ms]*/
-    bool moveArm(const double x, const double y, const double z, const int time);
+    bool moveArm(const double a, const double b, const double c, const double d, const double e, const double f, const int time);
     
     /*! @brief moves a servo from current angle to new angle.
      * This method sets the private variable desiredPWM and the millisecondsPerPWMStep (speed)
@@ -127,12 +122,10 @@ public:
      * @param time the time in ms it shall take for the servo to reach the new position (i.e. speed of the movement)*/
     void moveServo(const int servoNumber, const double angle, const int time);
   
-  
     /*! @brief set the speed of the two tracks of victor
      * speedA left track speed
      * speedB right track speed*/
     void setMotorSpeed(int speedA, int speedB);
-
 
     int getMotorPosLeft();
     int getMotorPosRight();
@@ -143,7 +136,6 @@ public:
      * is a blocking call */
     void indInitCompleted();
 
-    
     /*! @brief this void is called once in each arduino loop and ensures that each 
      * servo is moving toward the desired PWM with the speed millisecondsPerStep
      * and that all functions are updated. It is needed because arduino does not 
@@ -167,8 +159,8 @@ private:
     //State variables:
     int currentPWMs[NUMBER_OF_SERVOS]; //The current position of each servo
     int desiredPWMs[NUMBER_OF_SERVOS]; //The desired position of each servo
-    unsigned int millisecondsPerPWMStep[NUMBER_OF_SERVOS] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};//The speed of each servo, can be positive or negative.
-    unsigned long lastPWMupdateTime[NUMBER_OF_SERVOS] = {0,0,0,0,0,0,0,0,0,0,0,0};//The time in ms from arduino start when each servo was updated.
+    unsigned int millisecondsPerPWMStep = 2; //The number of milliseconds between each PWM 1 step update.
+    unsigned long lastPWMupdateTime = 0;//The time measured in ms from arduino start when each servo was updated.
 
 
 

@@ -9,31 +9,26 @@
 
 VictorUart::VictorUart(const std::string& portName) 
 {
-    
-
     m_messageStringEnumMap = {
-        {"MoveTracksMessage", arduinoIf::arduinoMessageType::MOVE_TRACKS_MESSAGE},
-        {"MoveArmMessage", arduinoIf::arduinoMessageType::MOVE_ARM_MESSAGE},
-        {"MoveClawMessage", arduinoIf::arduinoMessageType::MOVE_CLAW_MESSAGE},
-        {"MoveClawAngleMessage", arduinoIf::arduinoMessageType::MOVE_CLAW_ANGLE_MESSAGE}
-    };
-    m_arduinoMessageSizeMap = {
-        {arduinoIf::arduinoMessageType::MOVE_TRACKS_MESSAGE, SIZE_MOVE_TRACKS_MESSAGE},
-        {arduinoIf::arduinoMessageType::MOVE_ARM_MESSAGE, SIZE_MOVE_ARM_MESSAGE},
-        {arduinoIf::arduinoMessageType::MOVE_CLAW_MESSAGE, SIZE_MOVE_CLAW_MESSAGE},
-        {arduinoIf::arduinoMessageType::MOVE_CLAW_ANGLE_MESSAGE, SIZE_MOVE_CLAW_ANGLE_MESSAGE},
+        {"MoveTracksMessage", raspberryIf::RaspberryMessageType::MOVE_TRACKS_MESSAGE},
+        {"MoveArmMessage", raspberryIf::RaspberryMessageType::MOVE_ARM_MESSAGE},
+        {"MoveClawMessage", raspberryIf::RaspberryMessageType::MOVE_CLAW_MESSAGE},
+        {"MoveClawAngleMessage", raspberryIf::RaspberryMessageType::MOVE_CLAW_ANGLE_MESSAGE}
     };
 
     fd = open(portName.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
-    if (fd == -1) {
+    if (fd == -1) 
+    {
         std::cerr << "Unable to open port " << portName << std::endl;
         exit(1);
     }
 
-    // Sleep for a short period to give the Arduino time to reset if it does
+    // Sleep for a short period to give the raspberry time to reset if it does
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
     configurePort();
+
+    m_inverseKinematics = InverseKinematics();
 }
 
 VictorUart::~VictorUart()
@@ -101,7 +96,7 @@ void VictorUart::startPrintToConsole()
 }
 
 
-arduinoIf::arduinoMessageType VictorUart::extractMessageName(const std::string& input) 
+raspberryIf::RaspberryMessageType VictorUart::extractMessageName(const std::string& input) 
 {
     size_t pos = input.find('(');//can assume to always work since string is kotlin-data-class toString output.
     std::string messageName = input.substr(0, pos);
@@ -109,7 +104,7 @@ arduinoIf::arduinoMessageType VictorUart::extractMessageName(const std::string& 
 
     if(m_messageStringEnumMap.find(messageName) == m_messageStringEnumMap.end())
     {
-        return arduinoIf::arduinoMessageType::NO_MESSAGE;    
+        return raspberryIf::RaspberryMessageType::NO_MESSAGE;    
     }
 
     return m_messageStringEnumMap.at(messageName);
@@ -131,50 +126,81 @@ std::vector<uint8_t> VictorUart::extractMessageData(const std::string& input) {
     return numbers;
 }
 
-bool VictorUart::isValid(arduinoIf::arduinoMessageType arduinoMessage, std::vector<uint8_t> totalMessage)
+
+bool VictorUart::handleMessage(std::string message)
 {
-    if(m_arduinoMessageSizeMap.at(arduinoMessage)!=totalMessage.size())
+    auto messageType = extractMessageName(message);
+    auto messageData = extractMessageData(message);
+    
+    if(messageType == raspberryIf::RaspberryMessageType::MOVE_TRACKS_MESSAGE)
     {
-        std::cerr<<"Raspberry: The message size is invalid, expected " << m_arduinoMessageSizeMap.at(arduinoMessage) << " bytes, " << " but only managed to parse " << totalMessage.size() << "bytes from the string (message type included)\n";   
-        return false;
+        auto moveTracksMessage = raspberryIf::createMessage<raspberryIf::MoveTracksMessage>(messageData);
+        return moveTracksMessage.has_value() ? doMoveTracks(moveTracksMessage.value()) : false;
     }
+    else if(messageType == raspberryIf::RaspberryMessageType::MOVE_ARM_MESSAGE)
+    {
+        auto moveArmMessage = raspberryIf::createMessage<raspberryIf::MoveArmMessage>(messageData);
+        return moveArmMessage.has_value() ? doMoveArm(moveArmMessage.value()) : false;
+    }
+    else if(messageType == raspberryIf::RaspberryMessageType::MOVE_CLAW_MESSAGE)
+    {
+        auto moveClawMessage = raspberryIf::createMessage<raspberryIf::MoveClawMessage>(messageData);
+        return moveClawMessage.has_value() ? doMoveClaw(moveClawMessage.value()) : false;
+    }
+    else
+    {
+        std::cerr << "Raspberry: Received unknown message: " << message <<"\n";
+        return false;
+    }   
+}
+
+bool VictorUart::doMoveTracks(raspberryIf::MoveTracksMessage moveTracksMessage)
+{
+    std::vector<uint8_t> message{static_cast<uint8_t>(raspberryIf::RaspberryMessageType::MOVE_TRACKS_MESSAGE), moveTracksMessage.leftTrackSpeed, moveTracksMessage.rightTrackSpeed};
+    send(message);
     return true;
 }
 
-bool VictorUart::send(std::string message)
+bool VictorUart::doMoveArm(raspberryIf::MoveArmMessage moveArmMessage)
 {
-    arduinoIf::arduinoMessageType arduinoMessage = extractMessageName(message);
-    if(arduinoMessage == arduinoIf::arduinoMessageType::NO_MESSAGE)
-    {
-        std::cerr << "Received unknown message: " << message <<"\n";
-        return false;
-    }
     
-    std::vector<uint8_t> totalMessage = extractMessageData(message);
-    totalMessage.insert(totalMessage.begin(), static_cast<uint8_t>(arduinoMessage));
-    if(!isValid(arduinoMessage,totalMessage))
-    {
-        std::cerr << "Received invalid message: " << message <<"\n";
-        return false;
-    }
+    double x = moveArmMessage.xcm*10 + moveArmMessage.xmm;
+    double y = moveArmMessage.ycm*10 + moveArmMessage.ymm;
+    double z = moveArmMessage.zcm*10 + moveArmMessage.zmm;
+    double alpha = 90.0;
+    double beta = 0;
+    double gamma = 0;
+   
+    const std::vector<double> desiredValue{x,y,z,alpha,beta,gamma};
+    std::vector<double> solution;
+    m_inverseKinematics.solve(desiredValue, solution);
 
+    std::vector<uint8_t> solutionU8;
+    solutionU8.push_back(static_cast<uint8_t>(raspberryIf::RaspberryMessageType::MOVE_ARM_MESSAGE));
+
+    for(const double& val : solution)
+    {
+        solutionU8.push_back(static_cast<uint8_t>(static_cast<int8_t>(std::round(val))));
+    }
+    send(solutionU8);
+
+    return true;
+}
+
+bool VictorUart::doMoveClaw(raspberryIf::MoveClawMessage moveClawMessage)
+{
+    std::vector<uint8_t> message{static_cast<uint8_t>(raspberryIf::RaspberryMessageType::MOVE_CLAW_MESSAGE), moveClawMessage.state};
+    send(message);
+    return true;
+}
+
+void VictorUart::send(std::vector<uint8_t> message)
+{
     std::cerr << "Raspberry: sending Message: ";
-    for(uint8_t &byte : totalMessage)
+    for(uint8_t &byte : message)
     {
         std::cerr << static_cast<int>(byte) << ", ";
         sendByte(byte);
     }
     std::cerr << "\n";
-
-    return true;
 }
-
-
-
-
-
-
-
-
-
-

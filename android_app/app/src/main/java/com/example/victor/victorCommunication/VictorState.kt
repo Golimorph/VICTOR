@@ -17,8 +17,8 @@ class VictorState {
     private var _clawAngleStateChanged = false
     private var _clawState = false
     private var _armX: Int = 0
-    private var _armY: Int = 190
-    private var _armZ: Int = 150
+    private var _armY: Int = 200
+    private var _armZ: Int = 93
     private var _clawX: Int = 0
     private var _clawY: Int = 125
     private var _clawZ: Int = 0

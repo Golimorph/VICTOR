@@ -39,9 +39,6 @@ void checkInbox()
 			case static_cast<uint8_t>(arduinoIf::arduinoMessageType::MOVE_CLAW_MESSAGE):
 				messageSize = SIZE_MOVE_CLAW_MESSAGE;
 				break;
-			case static_cast<uint8_t>(arduinoIf::arduinoMessageType::MOVE_CLAW_ANGLE_MESSAGE):
-				messageSize = SIZE_MOVE_CLAW_ANGLE_MESSAGE;
-				break;
 			default:
 				if(!unknownMessageWarningPrintDone)
 				{

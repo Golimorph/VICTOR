@@ -17,12 +17,11 @@ void setup()
 {
   Serial.begin(9600);
   sf.setup();
-  //i2c::initI2C();
   Serial.println("Initialization successful!");
   sf.indInitCompleted();//nodd the US sensor to show init completed.
-
-  while (Serial.available() > 0) {
-    Serial.read(); // Read and discard any incoming data
+  while (Serial.available() > 0) 
+  {
+    Serial.read(); // Read and discard any incoming data to clean the buffer initially.
   }
 }
 
