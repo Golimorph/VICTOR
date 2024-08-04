@@ -111,18 +111,38 @@ raspberryIf::RaspberryMessageType VictorUart::extractMessageName(const std::stri
    
 }
 
-std::vector<uint8_t> VictorUart::extractMessageData(const std::string& input) {
-    std::vector<uint8_t> numbers;
+std::vector<int8_t> VictorUart::extractMessageData(const std::string& input) {
+
+    std::vector<int8_t> numbers;
     size_t pos = 0;
     while ((pos = input.find('=', pos)) != std::string::npos) 
     {
         pos++;
-        uint8_t num = static_cast<uint8_t>(std::stoi(input.substr(pos)));
-        size_t numEnd = input.find_first_not_of("-0123456789", pos); //Find the end of the number
-        pos = (numEnd == std::string::npos) ? input.length() : numEnd;
-        numbers.push_back(num);
+        // Check if the next character is a digit or a '-' for negative numbers
+        if (pos < input.length() && (isdigit(input[pos]) || input[pos] == '-')) {
+            try {
+                size_t numEnd;
+                int num = std::stoi(input.substr(pos), &numEnd);
+                if (num < -128 || num > 127) {
+                    // Skip invalid 8-bit integer values
+                    pos += numEnd;
+                    continue;
+                }
+                numbers.push_back(static_cast<int8_t>(num));
+                pos += numEnd;
+            } catch (const std::invalid_argument& e) {
+                // Handle the case where stoi could not convert to an integer
+                std::cerr << "Invalid argument: " << e.what() << std::endl;
+                pos = input.find_first_not_of("-0123456789", pos);
+            } catch (const std::out_of_range& e) {
+                // Handle the case where the number is out of range
+                std::cerr << "Out of range: " << e.what() << std::endl;
+                pos = input.find_first_not_of("-0123456789", pos);
+            }
+        } else {
+            pos = input.find_first_not_of("-0123456789", pos);
+        }
     }
-
     return numbers;
 }
 
@@ -156,7 +176,7 @@ bool VictorUart::handleMessage(std::string message)
 
 bool VictorUart::doMoveTracks(raspberryIf::MoveTracksMessage moveTracksMessage)
 {
-    std::vector<uint8_t> message{static_cast<uint8_t>(raspberryIf::RaspberryMessageType::MOVE_TRACKS_MESSAGE), moveTracksMessage.leftTrackSpeed, moveTracksMessage.rightTrackSpeed};
+    std::vector<uint8_t> message{static_cast<uint8_t>(raspberryIf::RaspberryMessageType::MOVE_TRACKS_MESSAGE), static_cast<uint8_t>(moveTracksMessage.leftTrackSpeed), static_cast<uint8_t>(moveTracksMessage.rightTrackSpeed)};
     send(message);
     return true;
 }
@@ -164,9 +184,9 @@ bool VictorUart::doMoveTracks(raspberryIf::MoveTracksMessage moveTracksMessage)
 bool VictorUart::doMoveArm(raspberryIf::MoveArmMessage moveArmMessage)
 {
     
-    double x = moveArmMessage.xcm*10 + moveArmMessage.xmm;
-    double y = moveArmMessage.ycm*10 + moveArmMessage.ymm;
-    double z = moveArmMessage.zcm*10 + moveArmMessage.zmm;
+    double x = static_cast<double>(static_cast<int8_t>(moveArmMessage.xcm))*10 + static_cast<double>(static_cast<int8_t>(moveArmMessage.xmm));
+    double y = static_cast<double>(static_cast<int8_t>(moveArmMessage.ycm))*10 + static_cast<double>(static_cast<int8_t>(moveArmMessage.ymm));
+    double z = static_cast<double>(static_cast<int8_t>(moveArmMessage.zcm))*10 + static_cast<double>(static_cast<int8_t>(moveArmMessage.zmm));
     double alpha = 90.0;
     double beta = 0;
     double gamma = 0;
@@ -196,7 +216,6 @@ bool VictorUart::doMoveClaw(raspberryIf::MoveClawMessage moveClawMessage)
 
 void VictorUart::send(std::vector<uint8_t> message)
 {
-    std::cerr << "Raspberry: sending Message: ";
     for(uint8_t &byte : message)
     {
         std::cerr << static_cast<int>(byte) << ", ";

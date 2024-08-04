@@ -13,10 +13,6 @@ int main()
     VictorUart victorUart("/dev/ttyUSB0");
     victorUart.startPrintToConsole();
 
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(4000));
-
-
     raspberryIf::MoveArmMessage moveArmMessage;
     moveArmMessage.xcm = 0; 
     moveArmMessage.xmm = 0;

@@ -50,7 +50,7 @@ private:
     void send(std::vector<uint8_t> message);
     std::map<std::string, raspberryIf::RaspberryMessageType> m_messageStringEnumMap;//The caller provides a string for the message, this map is used to convert it into the corresponding raspberryMessageType.
     raspberryIf::RaspberryMessageType extractMessageName(const std::string& input);//helper method to get message type from kotlin string
-    std::vector<uint8_t> extractMessageData(const std::string& input);   
+    std::vector<int8_t> extractMessageData(const std::string& input);   
 
     InverseKinematics m_inverseKinematics; 
 };

@@ -77,7 +77,7 @@ struct MoveClawAngleMessage
 
 /* @brief create one of the above defined messages from a vector of bytes*/
 template <typename MessageType>
-std::optional<MessageType> createMessage(const std::vector<uint8_t> messageData)
+std::optional<MessageType> createMessage(const std::vector<int8_t> messageData)
 {
 	if (messageData.size() != sizeof(MessageType)) 
 	{

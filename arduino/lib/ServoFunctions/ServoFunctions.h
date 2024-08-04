@@ -39,7 +39,7 @@
 #define ROTSERVO 2
 #define ROTSERVO_MIN 250
 #define ROTSERVO_MID 400
-#define ROTSERVO_MAX 500
+#define ROTSERVO_MAX 550
 
 /*calibrated ** */
 #define SHOULDERSERVOLEFT 4 //Do not use
@@ -159,7 +159,7 @@ private:
     //State variables:
     int currentPWMs[NUMBER_OF_SERVOS]; //The current position of each servo
     int desiredPWMs[NUMBER_OF_SERVOS]; //The desired position of each servo
-    unsigned int millisecondsPerPWMStep = 2; //The number of milliseconds between each PWM 1 step update.
+    unsigned int millisecondsPerPWMStep = 1; //The number of milliseconds between each PWM 1 step update.
     unsigned long lastPWMupdateTime = 0;//The time measured in ms from arduino start when each servo was updated.
 
 

@@ -61,8 +61,8 @@ private:
     std::vector<double> m_limits; //min_a,max_a,...,min_f,max_f
     std::vector<std::vector<double> > knownSolutions; //solution0,...,solution15, solutions on the format (a,b,c,d,e,f) angles of servos.
 
-    inline static const double epsilon{1e-4};
-    inline static const int max_iterations{2000};
+    inline static const double epsilon{1e-3};
+    inline static const int max_iterations{30};
 
 };
 
