@@ -56,15 +56,15 @@ class ClawAngleFragment : Fragment() {
     private fun setSeekbarsListeners(){
         //Initialize and define the coordinate limits for the arm movement.
         updateText()
-        binding.seekBarX.min = -125
+        binding.seekBarX.min = -90
         binding.seekBarX.progress = _victorState.getClawX()
-        binding.seekBarX.max = 125
-        binding.seekBarY.min = -125
+        binding.seekBarX.max = 90
+        binding.seekBarY.min = -90
         binding.seekBarY.progress = _victorState.getClawY()
-        binding.seekBarY.max = 125
-        binding.seekBarZ.min = -125
+        binding.seekBarY.max = 90
+        binding.seekBarZ.min = -90
         binding.seekBarZ.progress = _victorState.getClawZ()
-        binding.seekBarZ.max = 125
+        binding.seekBarZ.max = 90
 
         binding.seekBarX.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {

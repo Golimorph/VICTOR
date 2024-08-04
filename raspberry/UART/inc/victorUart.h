@@ -38,7 +38,7 @@ public:
     /*! @brief preform calculations and send message to arduino for execution */
     bool doMoveClaw(raspberryIf::MoveClawMessage moveClawMessage);
     /*! @brief preform calculations and send message to arduino for execution */
-    bool doMoveClawAngle(raspberryIf::MoveClawAngleMessage moveArmEulerAngleMessage);
+    bool doMoveClawAngle(raspberryIf::MoveClawAngleMessage moveClawAngleMessage);
 
 private:
     int fd;
@@ -53,6 +53,13 @@ private:
     std::vector<int8_t> extractMessageData(const std::string& input);   
 
     InverseKinematics m_inverseKinematics; 
+
+    double m_x = 0;
+    double m_y = 200;
+    double m_z = 150;
+    double m_alpha = 90;
+    double m_beta = 0;
+    double m_gamma = 0;
 };
     
 #endif

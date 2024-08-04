@@ -167,6 +167,11 @@ bool VictorUart::handleMessage(std::string message)
         auto moveClawMessage = raspberryIf::createMessage<raspberryIf::MoveClawMessage>(messageData);
         return moveClawMessage.has_value() ? doMoveClaw(moveClawMessage.value()) : false;
     }
+    else if(messageType == raspberryIf::RaspberryMessageType::MOVE_CLAW_ANGLE_MESSAGE)
+    {
+        auto moveClawAngleMessage = raspberryIf::createMessage<raspberryIf::MoveClawAngleMessage>(messageData);
+        return moveClawAngleMessage.has_value() ? doMoveClawAngle(moveClawAngleMessage.value()) : false;
+    }
     else
     {
         std::cerr << "Raspberry: Received unknown message: " << message <<"\n";
@@ -187,13 +192,15 @@ bool VictorUart::doMoveArm(raspberryIf::MoveArmMessage moveArmMessage)
     double x = static_cast<double>(static_cast<int8_t>(moveArmMessage.xcm))*10 + static_cast<double>(static_cast<int8_t>(moveArmMessage.xmm));
     double y = static_cast<double>(static_cast<int8_t>(moveArmMessage.ycm))*10 + static_cast<double>(static_cast<int8_t>(moveArmMessage.ymm));
     double z = static_cast<double>(static_cast<int8_t>(moveArmMessage.zcm))*10 + static_cast<double>(static_cast<int8_t>(moveArmMessage.zmm));
-    double alpha = 90.0;
-    double beta = 0;
-    double gamma = 0;
-   
-    const std::vector<double> desiredValue{x,y,z,alpha,beta,gamma};
+
+    const std::vector<double> desiredValue{x,y,z,m_alpha,m_beta,m_gamma};
     std::vector<double> solution;
-    m_inverseKinematics.solve(desiredValue, solution);
+    if(m_inverseKinematics.solve(desiredValue, solution))
+    {
+        m_x = x;
+        m_y = y;
+        m_z = z;
+    }
 
     std::vector<uint8_t> solutionU8;
     solutionU8.push_back(static_cast<uint8_t>(raspberryIf::RaspberryMessageType::MOVE_ARM_MESSAGE));
@@ -211,6 +218,34 @@ bool VictorUart::doMoveClaw(raspberryIf::MoveClawMessage moveClawMessage)
 {
     std::vector<uint8_t> message{static_cast<uint8_t>(raspberryIf::RaspberryMessageType::MOVE_CLAW_MESSAGE), moveClawMessage.state};
     send(message);
+    return true;
+}
+
+
+bool VictorUart::doMoveClawAngle(raspberryIf::MoveClawAngleMessage moveClawAngleMessage)
+{
+    double alpha = static_cast<double>(static_cast<int8_t>(moveClawAngleMessage.alpha));
+    double beta = static_cast<double>(static_cast<int8_t>(moveClawAngleMessage.beta));
+    double gamma = static_cast<double>(static_cast<int8_t>(moveClawAngleMessage.gamma));
+
+    const std::vector<double> desiredValue{m_x,m_y,m_z,alpha,beta,gamma};
+    std::vector<double> solution;
+    if(m_inverseKinematics.solve(desiredValue, solution))
+    {
+        m_alpha = alpha;
+        m_beta = beta;
+        m_gamma = gamma;
+    }
+
+    std::vector<uint8_t> solutionU8;
+    solutionU8.push_back(static_cast<uint8_t>(raspberryIf::RaspberryMessageType::MOVE_ARM_MESSAGE));
+
+    for(const double& val : solution)
+    {
+        solutionU8.push_back(static_cast<uint8_t>(static_cast<int8_t>(std::round(val))));
+    }
+    send(solutionU8);
+
     return true;
 }
 

@@ -20,7 +20,7 @@ class VictorState {
     private var _armY: Int = 200
     private var _armZ: Int = 93
     private var _clawX: Int = 0
-    private var _clawY: Int = 125
+    private var _clawY: Int = 90
     private var _clawZ: Int = 0
     private var _leftTrackSpeed: Int = 0
     private var _rightTrackSpeed: Int = 0
@@ -92,9 +92,6 @@ class VictorState {
             return
         }
         _clawX = x
-        _clawY = (125*_clawY.toDouble()/ getClawNorm() + 0.5).toInt()
-        _clawZ = (125*_clawZ.toDouble()/ getClawNorm() + 0.5).toInt()
-
         _clawAngleStateChanged = true
     }
 
@@ -103,8 +100,6 @@ class VictorState {
             return
         }
         _clawY = y
-        _clawX = (125*_clawX.toDouble()/ getClawNorm() + 0.5).toInt()
-        _clawZ = (125*_clawZ.toDouble()/ getClawNorm() + 0.5).toInt()
         _clawAngleStateChanged = true
     }
 
@@ -113,8 +108,6 @@ class VictorState {
             return
         }
         _clawZ = z
-        _clawX = (125*_clawX.toDouble()/ getClawNorm() + 0.5).toInt()
-        _clawY = (125*_clawY.toDouble()/ getClawNorm() + 0.5).toInt()
         _clawAngleStateChanged = true
     }
 
