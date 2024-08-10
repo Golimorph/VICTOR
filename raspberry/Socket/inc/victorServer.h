@@ -10,7 +10,6 @@
 #include <unistd.h>
 #include <functional>
 #include <sstream>
-#include "lights.h"
 #include <deque>
 #include <thread>
 

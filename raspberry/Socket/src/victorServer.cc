@@ -64,13 +64,6 @@ void VictorServer::startI2Cforwarding()
 
 bool VictorServer::initializeSocket()
 {
-	//blink the lights during socket finding process.
-	Lights lights1;
-	Lights lights2;
-	lights1.blink(Lights::LightType::LEFT_HEADLIGHT, std::chrono::milliseconds(500));
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
-	lights2.blink(Lights::LightType::RIGHT_HEADLIGHT, std::chrono::milliseconds(500));
-
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
@@ -103,13 +96,6 @@ bool VictorServer::initializeSocket()
         std::cerr<<"accept\n";
         return false;
     }
-
-
-    //steady lights when the socket iss connected.
-    lights1.on(Lights::LightType::LEFT_HEADLIGHT);
-	lights2.on(Lights::LightType::RIGHT_HEADLIGHT);
-
-
 
     return true;
 }
