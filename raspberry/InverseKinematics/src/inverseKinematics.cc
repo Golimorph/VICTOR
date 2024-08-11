@@ -15,7 +15,7 @@ InverseKinematics::InverseKinematics()
         -70*M_PI/180,  70*M_PI/180,
         -70*M_PI/180, 130*M_PI/180,
         -30*M_PI/180,  90*M_PI/180,
-        -M_PI/2     ,     M_PI/2,
+        -M_PI/2*(100/90), M_PI/2*(100/90),
         -M_PI/2     ,     M_PI/2,
         -M_PI/2     ,     M_PI/2
     };

@@ -59,9 +59,9 @@
 #define ELBOWSERVO_MAX 550 //525 is 68.3 degrees
 
 #define UNDERARMROTSERVO 6
-#define UNDERARMROTSERVO_MIN 125 //97.7 degrees anti-clockwise.(82.3)
+#define UNDERARMROTSERVO_MIN 100 //97.7 degrees anti-clockwise.(82.3)
 #define UNDERARMROTSERVO_MID 363 //0 degrees Horizonal.
-#define UNDERARMROTSERVO_MAX 600 //94.8 degrees clockwise. (85.2)
+#define UNDERARMROTSERVO_MAX 650 //94.8 degrees clockwise. (85.2)
 
 #define WRISTUPSERVO 7
 #define WRISTUPSERVO_MIN 125
@@ -86,7 +86,7 @@
 #define USERVOMAX_X 600
 #define USERVOMIN_Y 250
 #define USERVOMID_Y 330
-#define USERVOMAX_Y 410
+#define USERVOMAX_Y 380
 
 //resting position 
 //sf.moveServo(SHOULDERSERVORIGHT, -80, 3000);

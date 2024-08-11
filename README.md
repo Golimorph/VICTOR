@@ -19,3 +19,5 @@ Run:
 Check status on victor:
 	sudo systemctl start victorProgram.service
 	sudo systemctl status victorProgram.service
+
+
