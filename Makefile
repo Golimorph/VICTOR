@@ -36,3 +36,6 @@ danmark: $(DANMARK_SRCS)
 	
 runDanmark: danmark
 	java -jar $(DANMARK_JAR)
+
+format:
+	../astyle/build/mac/bin/AStyle  --style=allman  $(find . -name '*.cpp' -o -name '*.h')
