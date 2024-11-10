@@ -16,6 +16,9 @@ Run:
 	make runVictor
 	make runDanmark
 
+To format code:
+ 	cstyle 
+
 Check status on victor:
 	sudo systemctl start victorProgram.service
 	sudo systemctl status victorProgram.service

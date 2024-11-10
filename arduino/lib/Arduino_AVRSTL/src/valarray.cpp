@@ -19,7 +19,8 @@
 
 #include "valarray"
 
-namespace std{
+namespace std
+{
 
 
 

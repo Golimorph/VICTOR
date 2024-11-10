@@ -21,7 +21,8 @@
 #include "algorithm"
 
 
-namespace std{
+namespace std
+{
 
 
 

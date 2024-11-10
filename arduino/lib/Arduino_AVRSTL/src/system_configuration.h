@@ -1,5 +1,5 @@
 /*
- * Configuration for Arduino's compiler. 
+ * Configuration for Arduino's compiler.
  *   >>> This is a guess <<<
  */
 /*

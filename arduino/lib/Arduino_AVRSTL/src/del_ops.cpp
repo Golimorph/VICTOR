@@ -22,6 +22,7 @@
 #include "cstdlib"
 #include "func_exception"
 
-_UCXXEXPORT void operator delete(void* ptr, std::size_t) throw(){
-	::operator delete (ptr);
+_UCXXEXPORT void operator delete(void* ptr, std::size_t) throw()
+{
+    ::operator delete (ptr);
 }

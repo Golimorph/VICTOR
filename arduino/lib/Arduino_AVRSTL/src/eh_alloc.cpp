@@ -27,39 +27,45 @@
 namespace __cxxabiv1
 {
 
-extern "C" void * __cxa_allocate_exception(std::size_t thrown_size) throw(){
-	void *e;
-	// The sizeof crap is required by Itanium ABI because we need to
-	// provide space for accounting information which is implementation
-	// (gcc) defined.
-	e = malloc (thrown_size + sizeof(__cxa_refcounted_exception));
-	if (0 == e){
-		std::terminate();
-	}
-	memset (e, 0, sizeof(__cxa_refcounted_exception));
-	return (void *)((unsigned char *)e + sizeof(__cxa_refcounted_exception));
+extern "C" void * __cxa_allocate_exception(std::size_t thrown_size) throw()
+{
+    void *e;
+    // The sizeof crap is required by Itanium ABI because we need to
+    // provide space for accounting information which is implementation
+    // (gcc) defined.
+    e = malloc (thrown_size + sizeof(__cxa_refcounted_exception));
+    if (0 == e)
+    {
+        std::terminate();
+    }
+    memset (e, 0, sizeof(__cxa_refcounted_exception));
+    return (void *)((unsigned char *)e + sizeof(__cxa_refcounted_exception));
 }
 
-extern "C" void __cxa_free_exception(void *vptr) throw(){
-	free( (char *)(vptr) - sizeof(__cxa_refcounted_exception) );
+extern "C" void __cxa_free_exception(void *vptr) throw()
+{
+    free( (char *)(vptr) - sizeof(__cxa_refcounted_exception) );
 }
 
 
-extern "C" __cxa_dependent_exception * __cxa_allocate_dependent_exception() throw(){
-	__cxa_dependent_exception *retval;
-	// The sizeof crap is required by Itanium ABI because we need to
-	// provide space for accounting information which is implementation
-	// (gcc) defined.
-	retval = static_cast<__cxa_dependent_exception*>(malloc (sizeof(__cxa_dependent_exception)));
-	if (0 == retval){
-		std::terminate();
-	}
-	memset (retval, 0, sizeof(__cxa_dependent_exception));
-	return retval;
+extern "C" __cxa_dependent_exception * __cxa_allocate_dependent_exception() throw()
+{
+    __cxa_dependent_exception *retval;
+    // The sizeof crap is required by Itanium ABI because we need to
+    // provide space for accounting information which is implementation
+    // (gcc) defined.
+    retval = static_cast<__cxa_dependent_exception*>(malloc (sizeof(__cxa_dependent_exception)));
+    if (0 == retval)
+    {
+        std::terminate();
+    }
+    memset (retval, 0, sizeof(__cxa_dependent_exception));
+    return retval;
 }
 
-extern "C" void __cxa_free_dependent_exception(__cxa_dependent_exception *vptr) throw(){
-	free( (char *)(vptr) );
+extern "C" void __cxa_free_dependent_exception(__cxa_dependent_exception *vptr) throw()
+{
+    free( (char *)(vptr) );
 }
 
 }  /* namespace __cxxabiv1 */

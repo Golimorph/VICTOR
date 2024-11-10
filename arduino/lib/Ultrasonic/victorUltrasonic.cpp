@@ -25,7 +25,7 @@ long int VictorUltrasonic::getDistance()
         return -1;//unsuccessful read
     }
     distance = duration / 29.1 / 2.0 ;
-    
+
     return distance;
 }
 

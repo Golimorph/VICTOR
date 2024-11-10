@@ -15,7 +15,7 @@
 #define F1  19.2 //OK
 #define F2  71.53 //OK
 
-class InverseKinematics 
+class InverseKinematics
 {
 public:
     InverseKinematics();
@@ -31,12 +31,12 @@ public:
 
 private:
 
-	void compute_functions(const std::vector<double>& vars, std::vector<double>& funcs);
+    void compute_functions(const std::vector<double>& vars, std::vector<double>& funcs);
     void compute_jacobian(const std::vector<double>& vars, std::vector<std::vector<double> >& J);
     std::vector<double> solve_system(const std::vector<std::vector<double> >& J, const std::vector<double>& funcs);
     /*! @brief normalize the solution to within -M_PI to M_PI */
     void normalize(std::vector<double> &solution);
-    /*! @brief check if the presented solution is within the abilities of the robot arm 
+    /*! @brief check if the presented solution is within the abilities of the robot arm
      * @paramm solution the solution to check
      * @return true if the solution is possible for the robot arm.*/
     bool isValid(const std::vector<double>& solution);
@@ -46,15 +46,15 @@ private:
     void convertToDegrees(std::vector<double>& varsRadians);
 
     /*! @brief Internally all angles are stored in radians. But externally this class uses degrees.
-     *  @param desiredValues x,y,z,alpha,beta,gamma where x,y,z is in mm and alpha,beta,gamma is in radians. 
+     *  @param desiredValues x,y,z,alpha,beta,gamma where x,y,z is in mm and alpha,beta,gamma is in radians.
      *  @return last three parameters, alpha,beta,gamma will be in radians.*/
     std::vector<double> convertDesiredValuesToRadians(std::vector<double> desiredValues);
 
-    /*! @brief check if the presented solution is within the abilities of the robot arm 
+    /*! @brief check if the presented solution is within the abilities of the robot arm
      * @paramm solution the solution to check
      * @return true if the solution is possible for the robot arm.*/
     bool solveForGuess(std::vector<double>& solution, const std::vector<double> guess);
-    
+
 
     std::vector<double> m_desiredValue; //x,y,z,alpha,beta,gamma
     std::vector<double> m_lastSolution; //a,b,c,d,e,f angles of serovs

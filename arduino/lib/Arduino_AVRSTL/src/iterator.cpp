@@ -19,7 +19,8 @@
 
 #include "iterator"
 
-namespace std{
+namespace std
+{
 
 
 

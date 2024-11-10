@@ -12,7 +12,7 @@ class VictorUltrasonic
 public:
     VictorUltrasonic(int TRIG_PIN, int ECHO_PIN);
     long int getDistance();
-    
+
 private:
     int m_TRIG_PIN;
     int m_ECHO_PIN;

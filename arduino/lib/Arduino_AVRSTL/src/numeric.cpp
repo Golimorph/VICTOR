@@ -19,7 +19,8 @@
 
 #include "numeric"
 
-namespace std{
+namespace std
+{
 
 
 }

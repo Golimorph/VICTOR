@@ -7,17 +7,20 @@
 #include <stdint.h>
 #include <AsyncDelay.h>
 
-class SoftWire : public Stream {
-  public:
-    enum result_t {
-      ack = 0,
-      nack = 1,
-      timedOut = 2,
+class SoftWire : public Stream
+{
+public:
+    enum result_t
+    {
+        ack = 0,
+        nack = 1,
+        timedOut = 2,
     };
 
-    enum mode_t {
-      writeMode = 0,
-      readMode = 1,
+    enum mode_t
+    {
+        writeMode = 0,
+        readMode = 1,
     };
 
     static const uint8_t defaultDelay_us = 10;
@@ -86,25 +89,31 @@ class SoftWire : public Stream {
 
 
     // Setters to override functions which control the SDA and SCL pins
-    inline void setSetSdaLow(void (*sdaLowFn)(const SoftWire*)) {
-      _sdaLow = sdaLowFn;
+    inline void setSetSdaLow(void (*sdaLowFn)(const SoftWire*))
+    {
+        _sdaLow = sdaLowFn;
     }
-    inline void setSetSdaHigh(void (*sdaHighFn)(const SoftWire*)) {
-      _sdaHigh = sdaHighFn;
+    inline void setSetSdaHigh(void (*sdaHighFn)(const SoftWire*))
+    {
+        _sdaHigh = sdaHighFn;
     }
-    inline void setSetSclLow(void (*sclLowFn)(const SoftWire*)) {
-      _sclLow = sclLowFn;
+    inline void setSetSclLow(void (*sclLowFn)(const SoftWire*))
+    {
+        _sclLow = sclLowFn;
     }
-    inline void setSetSclHigh(void (*sclHighFn)(const SoftWire*)) {
-      _sclHigh = sclHighFn;
+    inline void setSetSclHigh(void (*sclHighFn)(const SoftWire*))
+    {
+        _sclHigh = sclHighFn;
     }
 
     // Setters to override the functions which read the status of SDA and SCL
-    inline void setReadSda(uint8_t (*readSdaFn)(const SoftWire*)) {
-      _readSda = readSdaFn;
+    inline void setReadSda(uint8_t (*readSdaFn)(const SoftWire*))
+    {
+        _readSda = readSdaFn;
     }
-    inline void setReadScl(uint8_t (*readSclFn)(const SoftWire*)) {
-      _readScl = readSclFn;
+    inline void setReadScl(uint8_t (*readSclFn)(const SoftWire*))
+    {
+        _readScl = readSclFn;
     }
 
     // Wrapper functions to provide direct compatibility with the Wire library (TwoWire class)
@@ -113,19 +122,22 @@ class SoftWire : public Stream {
     virtual size_t write(const uint8_t *data, size_t quantity);
     virtual int read(void);
     virtual int peek(void);
-    inline virtual void flush (void) {
-      // TODO: (to be implemented in Wire)
+    inline virtual void flush (void)
+    {
+        // TODO: (to be implemented in Wire)
     }
 
     void setClock(uint32_t frequency); // Approximate frequency in Hz
     void beginTransmission(uint8_t address);
-    inline void beginTransmission(int address) {
-      beginTransmission((uint8_t)address);
+    inline void beginTransmission(int address)
+    {
+        beginTransmission((uint8_t)address);
     }
 
     uint8_t endTransmission(uint8_t);
-    uint8_t endTransmission(void) {
-      return endTransmission(true);
+    uint8_t endTransmission(void)
+    {
+        return endTransmission(true);
     }
 
 
@@ -136,20 +148,22 @@ class SoftWire : public Stream {
 
     // The Wire compatibility functions require RX and TX buffers. The same address space may be used for both
     // as long as the user does not call receiveFrom between startTransmission and endTransmission.
-    inline void setRxBuffer(void *rxBuffer, uint8_t rxBufferSize) {
-      _rxBuffer = (uint8_t*)rxBuffer;
-      _rxBufferSize = rxBufferSize;
-      _rxBufferIndex = 0;
-      _rxBufferBytesRead = 0;
+    inline void setRxBuffer(void *rxBuffer, uint8_t rxBufferSize)
+    {
+        _rxBuffer = (uint8_t*)rxBuffer;
+        _rxBufferSize = rxBufferSize;
+        _rxBufferIndex = 0;
+        _rxBufferBytesRead = 0;
     }
 
-    inline void setTxBuffer(void *txBuffer, uint8_t txBufferSize) {
-      _txBuffer = (uint8_t*)txBuffer;
-      _txBufferSize = txBufferSize;
-      _txBufferIndex = 0;
+    inline void setTxBuffer(void *txBuffer, uint8_t txBufferSize)
+    {
+        _txBuffer = (uint8_t*)txBuffer;
+        _txBufferSize = txBufferSize;
+        _txBufferIndex = 0;
     }
 
-  private:
+private:
     uint8_t _sda;
     uint8_t _scl;
     uint8_t _inputMode;
@@ -182,167 +196,168 @@ class SoftWire : public Stream {
 
 uint8_t SoftWire::getSda(void) const
 {
-  return _sda;
+    return _sda;
 }
 
 
 uint8_t SoftWire::getScl(void) const
 {
-  return _scl;
+    return _scl;
 }
 
 
 uint8_t SoftWire::getDelay_us(void) const
 {
-  return _delay_us;
+    return _delay_us;
 }
 
 
 uint16_t SoftWire::getTimeout_ms(void) const
 {
-  return _timeout_ms;
+    return _timeout_ms;
 }
 
 
 uint8_t SoftWire::getInputMode(void) const
 {
-  return _inputMode;
+    return _inputMode;
 }
 
 
 void SoftWire::setSda(uint8_t sda)
 {
-  _sda = sda;
+    _sda = sda;
 }
 
 
 void SoftWire::setScl(uint8_t scl)
 {
-  _scl = scl;
+    _scl = scl;
 }
 
 
 void SoftWire::enablePullups(bool enable)
 {
-  _inputMode = (enable ? INPUT_PULLUP : INPUT);
+    _inputMode = (enable ? INPUT_PULLUP : INPUT);
 }
 
 
 void SoftWire::setDelay_us(uint8_t delay_us)
 {
-  _delay_us = delay_us;
+    _delay_us = delay_us;
 }
 
 
 void SoftWire::setTimeout_ms(uint16_t timeout_ms)
 {
-  _timeout_ms = timeout_ms;
+    _timeout_ms = timeout_ms;
 }
 
 
 SoftWire::result_t SoftWire::startRead(uint8_t addr) const
 {
-  return llStart((addr << 1) + readMode);
+    return llStart((addr << 1) + readMode);
 }
 
 
 SoftWire::result_t SoftWire::startWrite(uint8_t addr) const
 {
-  return llStart((addr << 1) + writeMode);
+    return llStart((addr << 1) + writeMode);
 }
 
 
 SoftWire::result_t SoftWire::repeatedStartRead(uint8_t addr) const
 {
-  return llRepeatedStart((addr << 1) + readMode);
+    return llRepeatedStart((addr << 1) + readMode);
 }
 
 
 SoftWire::result_t SoftWire::repeatedStartWrite(uint8_t addr) const
 {
-  return llRepeatedStart((addr << 1) + writeMode);
+    return llRepeatedStart((addr << 1) + writeMode);
 }
 
 
 SoftWire::result_t SoftWire::startReadWait(uint8_t addr) const
 {
-  return llStartWait((addr << 1) + readMode);
+    return llStartWait((addr << 1) + readMode);
 }
 
 
 SoftWire::result_t SoftWire::startWriteWait(uint8_t addr) const
 {
-  return llStartWait((addr << 1) + writeMode);
+    return llStartWait((addr << 1) + writeMode);
 }
 
 
 SoftWire::result_t SoftWire::start(uint8_t addr, mode_t rwMode) const
 {
-  return llStart((addr << 1) + rwMode);
+    return llStart((addr << 1) + rwMode);
 }
 
 
 SoftWire::result_t SoftWire::repeatedStart(uint8_t addr, mode_t rwMode) const
 {
-  return llRepeatedStart((addr << 1) + rwMode);
+    return llRepeatedStart((addr << 1) + rwMode);
 }
 
 
 SoftWire::result_t SoftWire::startWait(uint8_t addr, mode_t rwMode) const
 {
-  return llStartWait((addr << 1) + rwMode);
+    return llStartWait((addr << 1) + rwMode);
 }
 
 
 SoftWire::result_t SoftWire::readThenAck(uint8_t &data) const
 {
-  return llRead(data, true);
+    return llRead(data, true);
 }
 
 
 SoftWire::result_t SoftWire::readThenNack(uint8_t &data) const
 {
-  return llRead(data, false);
+    return llRead(data, false);
 }
 
 
 void SoftWire::sdaLow(void) const
 {
-  _sdaLow(this);
+    _sdaLow(this);
 }
 
 
 void SoftWire::sdaHigh(void) const
 {
-  _sdaHigh(this);
+    _sdaHigh(this);
 }
 
 
 void SoftWire::sclLow(void) const
 {
-  _sclLow(this);
+    _sclLow(this);
 }
 
 
 void SoftWire::sclHigh(void) const
 {
-  _sclHigh(this);
+    _sclHigh(this);
 }
 
 
 bool SoftWire::sclHighAndStretch(AsyncDelay& timeout) const
 {
-  _sclHigh(this);
+    _sclHigh(this);
 
-  // Wait for SCL to actually become high in case the slave keeps
-  // it low (clock stretching).
-  while (_readScl(this) == LOW)
-    if (timeout.isExpired()) {
-      stop(false); // Reset bus. Do not allow clock stretching here
-      return false;
-    }
+    // Wait for SCL to actually become high in case the slave keeps
+    // it low (clock stretching).
+    while (_readScl(this) == LOW)
+        if (timeout.isExpired())
+        {
+            stop(false); // Reset bus. Do not allow clock stretching here
+            return false;
+        }
 
-  return true;
+    return true;
 }
 
 #endif

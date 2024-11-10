@@ -24,8 +24,9 @@
 #include <cstdlib>
 #include <func_exception>
 
-_UCXXEXPORT void operator delete(void* ptr) throw(){
-	free(ptr);
+_UCXXEXPORT void operator delete(void* ptr) throw()
+{
+    free(ptr);
 }
 
 #endif

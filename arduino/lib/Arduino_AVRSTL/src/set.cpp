@@ -19,7 +19,8 @@
 
 #include "set"
 
-namespace std{
+namespace std
+{
 
 
 

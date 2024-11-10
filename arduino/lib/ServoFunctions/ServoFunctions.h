@@ -88,7 +88,7 @@
 #define USERVOMID_Y 330
 #define USERVOMAX_Y 380
 
-//resting position 
+//resting position
 //sf.moveServo(SHOULDERSERVORIGHT, -80, 3000);
 //sf.moveServo(ELBOWSERVO, 75, 3000);
 
@@ -98,7 +98,7 @@ class ServoFunctions
 public:
     ServoFunctions();
 
-    /*! @brief sets up the communication with the servo shield and initializes 
+    /*! @brief sets up the communication with the servo shield and initializes
      * all servos to their default position.*/
     void setup();
 
@@ -112,7 +112,7 @@ public:
      * @param f angle of claw       [degrees]
      * @param time, the time it shall take to complete the move to the new coordinates [ms]*/
     bool moveArm(const double a, const double b, const double c, const double d, const double e, const double f, const int time);
-    
+
     /*! @brief moves a servo from current angle to new angle.
      * This method sets the private variable desiredPWM and the millisecondsPerPWMStep (speed)
      * The method call is non-blocking and the actual servo movement is done by increments
@@ -121,7 +121,7 @@ public:
      * @param angle the new angle for the servo
      * @param time the time in ms it shall take for the servo to reach the new position (i.e. speed of the movement)*/
     void moveServo(const int servoNumber, const double angle, const int time);
-  
+
     /*! @brief set the speed of the two tracks of victor
      * speedA left track speed
      * speedB right track speed*/
@@ -131,31 +131,31 @@ public:
     int getMotorPosRight();
     int getPWM(int servoNumber);
 
-    /*! @brief perform a simple nodding gesture of the US sensor to show 
-     * that initialization succedded, only run this in setup(), as it 
+    /*! @brief perform a simple nodding gesture of the US sensor to show
+     * that initialization succedded, only run this in setup(), as it
      * is a blocking call */
     void indInitCompleted();
 
-    /*! @brief this void is called once in each arduino loop and ensures that each 
+    /*! @brief this void is called once in each arduino loop and ensures that each
      * servo is moving toward the desired PWM with the speed millisecondsPerStep
-     * and that all functions are updated. It is needed because arduino does not 
+     * and that all functions are updated. It is needed because arduino does not
      * support threading in a simple way, and this instead acts as sort of a polling technique*/
     void refresh();
-    
+
 private:
 
     //Refresh methods and variables:
     void updateServoPositions();
-    
+
     //help methods and variables:
     void initMotorHallSensors();
     bool setPWM(const int servoNumber, const int value);
     int angleToPWM(const int servoNumber, const double angle) const;
     InverseKinematics m_inverseKinematics;
-    
+
     //library variables:
     Adafruit_PWMServoDriver adafruit_PWMServoDriver;
-    
+
     //State variables:
     int currentPWMs[NUMBER_OF_SERVOS]; //The current position of each servo
     int desiredPWMs[NUMBER_OF_SERVOS]; //The desired position of each servo

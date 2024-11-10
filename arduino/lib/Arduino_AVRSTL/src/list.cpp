@@ -19,7 +19,8 @@
 
 #include "list"
 
-namespace std{
+namespace std
+{
 
 
 

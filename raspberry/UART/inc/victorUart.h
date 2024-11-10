@@ -15,20 +15,21 @@
 #include "inverseKinematics.h"
 #include <cmath> //std::round
 
-class VictorUart {
+class VictorUart
+{
 public:
     VictorUart(const std::string& portName);
     ~VictorUart();
-    
+
     /*! @brief The UART connection to the arduino is used to print debug information. Calling this method starts
      * a separate thread which flushes the rx buffer of the UART to the terminal continously*/
     void startPrintToConsole();
 
-     /*! @brief the send message takes a string which is on kotlin data-class format 
-     * and converts it into a series of bytes (first byte denotes which message type) 
-     * and the following bytes represent the information in the message. Typically one byte per field of the signal. 
-     * It breakes down the message into bytes using the message specification in raspberryIf.h. These are then
-     * processed and converted into arduinoIf format and sent to the arduino. */
+    /*! @brief the send message takes a string which is on kotlin data-class format
+    * and converts it into a series of bytes (first byte denotes which message type)
+    * and the following bytes represent the information in the message. Typically one byte per field of the signal.
+    * It breakes down the message into bytes using the message specification in raspberryIf.h. These are then
+    * processed and converted into arduinoIf format and sent to the arduino. */
     bool handleMessage(std::string message);
 
     /*! @brief preform calculations and send message to arduino for execution */
@@ -50,9 +51,9 @@ private:
     void send(std::vector<uint8_t> message);
     std::map<std::string, raspberryIf::RaspberryMessageType> m_messageStringEnumMap;//The caller provides a string for the message, this map is used to convert it into the corresponding raspberryMessageType.
     raspberryIf::RaspberryMessageType extractMessageName(const std::string& input);//helper method to get message type from kotlin string
-    std::vector<int8_t> extractMessageData(const std::string& input);   
+    std::vector<int8_t> extractMessageData(const std::string& input);
 
-    InverseKinematics m_inverseKinematics; 
+    InverseKinematics m_inverseKinematics;
 
     double m_x = 0;
     double m_y = 200;
@@ -61,5 +62,5 @@ private:
     double m_beta = 0;
     double m_gamma = 0;
 };
-    
+
 #endif

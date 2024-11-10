@@ -21,14 +21,15 @@
 
 #include "iostream"
 
-namespace std{
+namespace std
+{
 
 #ifdef __UCLIBCXX_EXPAND_OSTREAM_CHAR__
 #ifdef __UCLIBCXX_EXPAND_ISTREAM_CHAR__
 
-	template _UCXXEXPORT basic_iostream<char, char_traits<char> >::
-		basic_iostream(basic_streambuf<char, char_traits<char> >* sb);
-	template _UCXXEXPORT basic_iostream<char, char_traits<char> >::~basic_iostream();
+template _UCXXEXPORT basic_iostream<char, char_traits<char> >::
+basic_iostream(basic_streambuf<char, char_traits<char> >* sb);
+template _UCXXEXPORT basic_iostream<char, char_traits<char> >::~basic_iostream();
 
 #endif
 #endif

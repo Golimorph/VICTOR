@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <SoftWire.h>
 
-class SoftI2c 
+class SoftI2c
 {
 public:
     SoftI2c(uint8_t sdaPin, uint8_t sclPin);

@@ -18,14 +18,14 @@
 class VictorServer
 {
 public:
-	using CallbackType = std::function<bool(std::string)>;
-	VictorServer(CallbackType callback);
-	~VictorServer();
-	void startI2Cforwarding();
+    using CallbackType = std::function<bool(std::string)>;
+    VictorServer(CallbackType callback);
+    ~VictorServer();
+    void startI2Cforwarding();
 private:
-	CallbackType m_callback;
-	bool initializeSocket();
-	std::vector<std::string> splitString(const std::string &str);
-	int m_socket;
+    CallbackType m_callback;
+    bool initializeSocket();
+    std::vector<std::string> splitString(const std::string &str);
+    int m_socket;
     int m_server_fd;
 };

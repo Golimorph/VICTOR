@@ -40,5 +40,8 @@ To build and upload:
 
 To build, upload and monitor serial:
 	make monitor_usb_arduino
+
+To format code:
+ 	cstyle 
 ------------------------------------------------------------------------
 

@@ -58,41 +58,41 @@ namespace __cxxabiv1
 // followed by the exception object itself.
 
 struct __cxa_exception
-{ 
-  // Manage the exception object itself.
-  std::type_info *exceptionType;
-  void (*exceptionDestructor)(void *); 
+{
+    // Manage the exception object itself.
+    std::type_info *exceptionType;
+    void (*exceptionDestructor)(void *);
 
-  // The C++ standard has entertaining rules wrt calling set_terminate
-  // and set_unexpected in the middle of the exception cleanup process.
-  std::unexpected_handler unexpectedHandler;
-  std::terminate_handler terminateHandler;
+    // The C++ standard has entertaining rules wrt calling set_terminate
+    // and set_unexpected in the middle of the exception cleanup process.
+    std::unexpected_handler unexpectedHandler;
+    std::terminate_handler terminateHandler;
 
-  // The caught exception stack threads through here.
-  __cxa_exception *nextException;
+    // The caught exception stack threads through here.
+    __cxa_exception *nextException;
 
-  // How many nested handlers have caught this exception.  A negated
-  // value is a signal that this object has been rethrown.
-  int handlerCount;
+    // How many nested handlers have caught this exception.  A negated
+    // value is a signal that this object has been rethrown.
+    int handlerCount;
 
-  // Cache parsed handler data from the personality routine Phase 1
-  // for Phase 2 and __cxa_call_unexpected.
-  int handlerSwitchValue;
-  const unsigned char *actionRecord;
-  const unsigned char *languageSpecificData;
-  _Unwind_Ptr catchTemp;
-  void *adjustedPtr;
+    // Cache parsed handler data from the personality routine Phase 1
+    // for Phase 2 and __cxa_call_unexpected.
+    int handlerSwitchValue;
+    const unsigned char *actionRecord;
+    const unsigned char *languageSpecificData;
+    _Unwind_Ptr catchTemp;
+    void *adjustedPtr;
 
-  // The generic exception header.  Must be last.
-  _Unwind_Exception unwindHeader;
+    // The generic exception header.  Must be last.
+    _Unwind_Exception unwindHeader;
 };
 
 struct __cxa_refcounted_exception
 {
-  // Manage this header.
-  _Atomic_word referenceCount;
-  // __cxa_exception must be last, and no padding can be after it.
-  __cxa_exception exc;
+    // Manage this header.
+    _Atomic_word referenceCount;
+    // __cxa_exception must be last, and no padding can be after it.
+    __cxa_exception exc;
 };
 
 // A dependent C++ exception object consists of a header, which is a wrapper
@@ -100,39 +100,39 @@ struct __cxa_refcounted_exception
 // followed by the exception object itself.
 struct __cxa_dependent_exception
 {
-  // The primary exception
-  void *primaryException;
+    // The primary exception
+    void *primaryException;
 
-  // The C++ standard has entertaining rules wrt calling set_terminate
-  // and set_unexpected in the middle of the exception cleanup process.
-  std::unexpected_handler unexpectedHandler;
-  std::terminate_handler terminateHandler;
+    // The C++ standard has entertaining rules wrt calling set_terminate
+    // and set_unexpected in the middle of the exception cleanup process.
+    std::unexpected_handler unexpectedHandler;
+    std::terminate_handler terminateHandler;
 
-  // The caught exception stack threads through here.
-  __cxa_exception *nextException;
+    // The caught exception stack threads through here.
+    __cxa_exception *nextException;
 
-  // How many nested handlers have caught this exception.  A negated
-  // value is a signal that this object has been rethrown.
-  int handlerCount;
+    // How many nested handlers have caught this exception.  A negated
+    // value is a signal that this object has been rethrown.
+    int handlerCount;
 
-  // Cache parsed handler data from the personality routine Phase 1
-  // for Phase 2 and __cxa_call_unexpected.
-  int handlerSwitchValue;
-  const unsigned char *actionRecord;
-  const unsigned char *languageSpecificData;
-  _Unwind_Ptr catchTemp;
-  void *adjustedPtr;
+    // Cache parsed handler data from the personality routine Phase 1
+    // for Phase 2 and __cxa_call_unexpected.
+    int handlerSwitchValue;
+    const unsigned char *actionRecord;
+    const unsigned char *languageSpecificData;
+    _Unwind_Ptr catchTemp;
+    void *adjustedPtr;
 
-  // The generic exception header.  Must be last.
-  _Unwind_Exception unwindHeader;
+    // The generic exception header.  Must be last.
+    _Unwind_Exception unwindHeader;
 };
 
 
 // Each thread in a C++ program has access to a __cxa_eh_globals object.
 struct __cxa_eh_globals
 {
-  __cxa_exception *caughtExceptions;
-  unsigned int uncaughtExceptions;
+    __cxa_exception *caughtExceptions;
+    unsigned int uncaughtExceptions;
 };
 
 
@@ -155,9 +155,9 @@ extern "C" void __cxa_free_dependent_exception(__cxa_dependent_exception *depend
 
 // Throw the exception.
 extern "C" void __cxa_throw (void *thrown_exception,
-			     std::type_info *tinfo,
-			     void (*dest) (void *))
-     __attribute__((noreturn));
+                             std::type_info *tinfo,
+                             void (*dest) (void *))
+__attribute__((noreturn));
 
 // Used to implement exception handlers.
 extern "C" void *__cxa_begin_catch (void *) throw();
@@ -189,47 +189,47 @@ extern std::unexpected_handler __unexpected_handler;
 // This is the exception class we report -- "GNUCC++\0".
 const _Unwind_Exception_Class __gxx_exception_class
 #ifndef __ARM_EABI_UNWINDER__
-= ((((((((_Unwind_Exception_Class) 'G' 
-	 << 8 | (_Unwind_Exception_Class) 'N')
-	<< 8 | (_Unwind_Exception_Class) 'U')
-       << 8 | (_Unwind_Exception_Class) 'C')
-      << 8 | (_Unwind_Exception_Class) 'C')
-     << 8 | (_Unwind_Exception_Class) '+')
-    << 8 | (_Unwind_Exception_Class) '+')
-   << 8 | (_Unwind_Exception_Class) '\0');
+    = ((((((((_Unwind_Exception_Class) 'G'
+             << 8 | (_Unwind_Exception_Class) 'N')
+            << 8 | (_Unwind_Exception_Class) 'U')
+           << 8 | (_Unwind_Exception_Class) 'C')
+          << 8 | (_Unwind_Exception_Class) 'C')
+         << 8 | (_Unwind_Exception_Class) '+')
+        << 8 | (_Unwind_Exception_Class) '+')
+       << 8 | (_Unwind_Exception_Class) '\0');
 #else
-= "GNUCC++";
+    = "GNUCC++";
 #endif
 
 // GNU C++ personality routine, Version 0.
 extern "C" _Unwind_Reason_Code __gxx_personality_v0
-     (int, _Unwind_Action, _Unwind_Exception_Class,
-      struct _Unwind_Exception *, struct _Unwind_Context *);
+(int, _Unwind_Action, _Unwind_Exception_Class,
+ struct _Unwind_Exception *, struct _Unwind_Context *);
 
 // GNU C++ sjlj personality routine, Version 0.
 extern "C" _Unwind_Reason_Code __gxx_personality_sj0
-     (int, _Unwind_Action, _Unwind_Exception_Class,
-      struct _Unwind_Exception *, struct _Unwind_Context *);
+(int, _Unwind_Action, _Unwind_Exception_Class,
+ struct _Unwind_Exception *, struct _Unwind_Context *);
 
 // Acquire the C++ exception header from the C++ object.
 static inline __cxa_exception *
 __get_exception_header_from_obj (void *ptr)
 {
-  return reinterpret_cast<__cxa_exception *>(ptr) - 1;
+    return reinterpret_cast<__cxa_exception *>(ptr) - 1;
 }
 
 // Acquire the C++ exception header from the generic exception header.
 static inline __cxa_exception *
 __get_exception_header_from_ue (_Unwind_Exception *exc)
 {
-  return reinterpret_cast<__cxa_exception *>(exc + 1) - 1;
+    return reinterpret_cast<__cxa_exception *>(exc + 1) - 1;
 }
 
 // Acquire the C++ refcounted exception header from the C++ object.
 static inline __cxa_refcounted_exception *
 __get_refcounted_exception_header_from_obj (void *ptr)
 {
-  return reinterpret_cast<__cxa_refcounted_exception *>(ptr) - 1;
+    return reinterpret_cast<__cxa_refcounted_exception *>(ptr) - 1;
 }
 
 // Acquire the C++ refcounted exception header from the generic exception
@@ -237,7 +237,7 @@ __get_refcounted_exception_header_from_obj (void *ptr)
 static inline __cxa_refcounted_exception *
 __get_refcounted_exception_header_from_ue (_Unwind_Exception *exc)
 {
-  return reinterpret_cast<__cxa_refcounted_exception *>(exc + 1) - 1;
+    return reinterpret_cast<__cxa_refcounted_exception *>(exc + 1) - 1;
 }
 
 } /* namespace __cxxabiv1 */

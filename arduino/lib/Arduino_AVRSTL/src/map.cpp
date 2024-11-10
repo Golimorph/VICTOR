@@ -19,7 +19,8 @@
 
 #include "map"
 
-namespace std{
+namespace std
+{
 
 
 
