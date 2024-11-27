@@ -5,12 +5,25 @@ import os
 import numpy as np
 import cv2
 import hailo
+import socket
 from hailo_rpi_common import (
     get_caps_from_pad,
     get_numpy_from_buffer,
     app_callback_class,
 )
 from detection_pipeline import GStreamerDetectionApp
+
+
+# -----------------------------------------------------------------------------------------------
+# Method to send the detected objects to the main C++ program running on VICTOR.
+# All processing and logic of higher level abstraction is done in the C++ program.
+# -----------------------------------------------------------------------------------------------
+host = 'localhost'
+port = 8081
+socketToCppProgram = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+socketToCppProgram.connect((host, port))
+def send_detection(detection):
+    socketToCppProgram.sendall(detection.encode())
 
 # -----------------------------------------------------------------------------------------------
 # User-defined class to be used in the callback function
@@ -59,8 +72,9 @@ def app_callback(pad, info, user_data):
         label = detection.get_label()
         bbox = detection.get_bbox()
         confidence = detection.get_confidence()
-        if label == "person":
-            string_to_print += f"Detection: {label} {confidence:.2f}\n"
+        if label == "mouse":
+            string_to_print += f"Detection: {label} {confidence:.2f} , {bbox.xmin()}, {bbox.xmax()} \n"
+            send_detection("it was detected!");
             detection_count += 1
     if user_data.use_frame:
         # Note: using imshow will not work here, as the callback function is not running in the main thread

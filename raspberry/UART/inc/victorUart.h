@@ -18,7 +18,7 @@
 class VictorUart
 {
 public:
-    VictorUart(const std::string& portName);
+    explicit VictorUart(const std::string& portName);
     ~VictorUart();
 
     /*! @brief The UART connection to the arduino is used to print debug information. Calling this method starts

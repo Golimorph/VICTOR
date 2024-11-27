@@ -12,7 +12,8 @@ compile and run kotlin client program for MAC
 	kotlinc -classpath danmark/jline-3.21.0.jar danmark/Client.kt -include-runtime -d danmark/Client.jar
 	kotlin -classpath danmark/jline-3.21.0.jar:danmark/Client.jar ClientKt
 
-NOT IMPORTANT:
+
+ARDUINO-CLI
 ----------------------------------------------------------------------
 Comipling arduino programs on victor@raspberrypi.local:
 VictorMaster contains the programs for the raspberry5 in victor. 
@@ -41,7 +42,29 @@ To build and upload:
 To build, upload and monitor serial:
 	make monitor_usb_arduino
 
+------------------------------------------------------------------------
+
 To format code:
  	cstyle 
-------------------------------------------------------------------------
+Check status on victor:
+	sudo systemctl start victorProgram.service
+	sudo systemctl status victorProgram.service
+	sudo journalctl -u victorProgram.service -f
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

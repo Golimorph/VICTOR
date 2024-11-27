@@ -2,7 +2,10 @@
 #include <string>
 #include "victorServer.h"
 #include "victorUart.h"
+#include "stateMachine.h"
+#include "camera.h"
 #include <iostream>
+
 
 
 
@@ -12,6 +15,7 @@ int main()
     std::cerr<<"raspberry: started\n";
     VictorUart victorUart("/dev/ttyUSB0");
     victorUart.startPrintToConsole();
+    Camera camera;//Camera interface to the Hailo python API.
 
     raspberryIf::MoveArmMessage moveArmMessage;
     moveArmMessage.xcm = 0; 
@@ -21,10 +25,13 @@ int main()
     moveArmMessage.zcm = 9;
     moveArmMessage.zmm = 3;
     victorUart.doMoveArm(moveArmMessage);
+
+    StateMachine stateMachine(victorUart, camera);
+    stateMachine.start();
     
     
     VictorServer victorServer(std::bind(&VictorUart::handleMessage, &victorUart, std::placeholders::_1));
-    victorServer.startI2Cforwarding();
+    victorServer.startI2Cforwarding();//blocking
 
     return 0;
 }

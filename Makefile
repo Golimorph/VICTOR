@@ -1,7 +1,7 @@
 
 RASPBERY_CPP_REPO = Repository
-RASPBERRY_SRCS = $(RASPBERY_CPP_REPO)/main.cc $(RASPBERY_CPP_REPO)/Socket/src/victorServer.cc $(RASPBERY_CPP_REPO)/UART/src/victorUart.cc $(RASPBERY_CPP_REPO)/InverseKinematics/src/inverseKinematics.cc
-RASPBERRY_INCS = -I $(RASPBERY_CPP_REPO)/Socket/inc/ -I $(RASPBERY_CPP_REPO)/UART/inc/ -I $(RASPBERY_CPP_REPO)/InverseKinematics/inc/ -I $(RASPBERY_CPP_REPO)/if -I $(RASPBERY_CPP_REPO)/
+RASPBERRY_SRCS = $(RASPBERY_CPP_REPO)/main.cc $(RASPBERY_CPP_REPO)/Socket/src/victorServer.cc $(RASPBERY_CPP_REPO)/UART/src/victorUart.cc $(RASPBERY_CPP_REPO)/InverseKinematics/src/inverseKinematics.cc $(RASPBERY_CPP_REPO)/StateMachine/src/stateMachine.cc $(RASPBERY_CPP_REPO)/StateMachine/src/approach.cc $(RASPBERY_CPP_REPO)/Sensors/src/camera.cc
+RASPBERRY_INCS = -I $(RASPBERY_CPP_REPO)/Socket/inc/ -I $(RASPBERY_CPP_REPO)/UART/inc/ -I $(RASPBERY_CPP_REPO)/InverseKinematics/inc/ -I $(RASPBERY_CPP_REPO)/StateMachine/inc/ -I $(RASPBERY_CPP_REPO)/Sensors/inc/ -I $(RASPBERY_CPP_REPO)/if -I $(RASPBERY_CPP_REPO)/
 
 
 #build everything and upload it to victor
