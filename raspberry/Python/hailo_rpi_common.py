@@ -192,22 +192,26 @@ def SOURCE_PIPELINE(video_source, video_format='RGB', video_width=640, video_hei
     """
     source_type = get_source_type(video_source)
 
-    if source_type == 'rpi':
-        source_element = (
+
+    #Golimorph: for some reason "usb" got selected on the raspberrypi which is not correct.
+    #I therefore uncommented the other possibilities, hardcoding it to use the raspberrypi 
+    #camera for now.
+   # if source_type == 'rpi':
+    source_element = (
             f'libcamerasrc name={name} ! '
             f'video/x-raw, format={video_format}, width=1536, height=864 ! '
         )
-    elif source_type == 'usb':
-        source_element = (
-            f'v4l2src device={video_source} name={name} ! '
-            'video/x-raw, width=640, height=480 ! '
-        )
-    else:
-        source_element = (
-            f'filesrc location="{video_source}" name={name} ! '
-            f'{QUEUE(name=f"{name}_queue_dec264")} ! '
-            'qtdemux ! h264parse ! avdec_h264 max-threads=2 ! '
-        )
+   # elif source_type == 'usb':
+   #     source_element = (
+   #         f'v4l2src device={video_source} name={name} ! '
+   #         'video/x-raw, width=640, height=480 ! '
+   #     )
+   # else:
+   #     source_element = (
+   #         f'filesrc location="{video_source}" name={name} ! '
+   #         f'{QUEUE(name=f"{name}_queue_dec264")} ! '
+   #         'qtdemux ! h264parse ! avdec_h264 max-threads=2 ! '
+   #     )
     source_pipeline = (
         f'{source_element} '
         f'{QUEUE(name=f"{name}_scale_q")} ! '
