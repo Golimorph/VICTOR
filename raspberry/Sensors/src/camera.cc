@@ -66,22 +66,56 @@ void Camera::runHailo()
 }
 
     
+// Function to extract object properties from the string
+Camera::ObjectProperties Camera::parseObjectProperties(const std::string& input) 
+{
+    ObjectProperties objProps;
 
+    // Use regular expressions to extract object type and numbers
+    std::regex number_regex(R"([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)");
+    std::regex type_regex(R"([a-zA-Z]+)");  // Matches the type (letters only)
 
-bool Camera::getDetections(std::string object) 
+    // First, extract the object type (e.g., "mouse")
+    std::smatch type_match;
+    if (std::regex_search(input, type_match, type_regex)) {
+        objProps.type = type_match.str();
+    }
+
+    // Extract numbers using regex
+    std::sregex_iterator it(input.begin(), input.end(), number_regex);
+    std::sregex_iterator end;
+
+    // Extract the numbers and fill the struct
+    int index = 0;
+    while (it != end && index < 5) {
+        double value = std::stod(it->str());
+        switch (index) {
+            case 0: objProps.probability = value; break;
+            case 1: objProps.xmin = value; break;
+            case 2: objProps.xmax = value; break;
+            case 3: objProps.ymin = value; break;
+            case 4: objProps.ymax = value; break;
+        }
+        ++it;
+        ++index;
+    }
+
+    return objProps;
+}
+
+std::optional<Camera::ObjectProperties> Camera::getDetection(std::string object) 
 {
 	//TODO make it so that object is sent to the python program and the c++ program will wait for the returned message from the callback.
-	//write(socket, solution.data(), solution.size() * sizeof(double));
+	
+    write(m_socket, object.c_str(), object.size());//Tell Hailo what object I want to detect.
     char buffer[1024] = {0};
     int valread = read(m_socket, buffer, 1024);
     if (valread > 0) 
     {
         std::cerr << "Raspberry: Received message from Hailo: " << buffer << std::endl;
-        return true;
+        return parseObjectProperties(buffer); //object found.
     }
-    return false;
-    //std::vector<std::vector<double>> result;
-    //return result;
+    return std::nullopt; //object not found
 }
 
 

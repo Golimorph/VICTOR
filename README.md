@@ -19,8 +19,9 @@ Run:
 To format code:
  	cstyle 
 
-Control the program on victor:
-	start
-	stop
-	log
+Check status on victor:
+	sudo systemctl stop victorProgram.service
+	sudo systemctl status victorProgram.service
+	sudo journalctl -u victorProgram.service -f
+
 

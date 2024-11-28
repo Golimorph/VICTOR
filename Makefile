@@ -6,6 +6,8 @@ RASPBERRY_INCS = -I $(RASPBERY_CPP_REPO)/Socket/inc/ -I $(RASPBERY_CPP_REPO)/UAR
 
 #build everything and upload it to victor
 victorWithArduino:
+	#stop the program execution on victor
+	ssh victor@raspberrypi.local 'sudo systemctl stop victorProgram.service'
 	#upload to victor
 	rsync -r arduino victor@raspberrypi.local:/home/victor/Arduino
 	rsync -r arduino/if/ victor@raspberrypi.local:/home/victor/Repository
@@ -36,4 +38,20 @@ danmark: $(DANMARK_SRCS)
 	
 runDanmark: danmark
 	java -jar $(DANMARK_JAR)
+
+start:
+	ssh victor@raspberrypi.local 'sudo systemctl start victorProgram.service'
 	
+stop:
+	ssh victor@raspberrypi.local 'sudo systemctl stop victorProgram.service'
+
+log:
+	ssh victor@raspberrypi.local 'sudo journalctl -u victorProgram.service -f'
+
+
+
+
+
+
+
+

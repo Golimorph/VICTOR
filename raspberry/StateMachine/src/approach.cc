@@ -8,7 +8,7 @@ Approach::Approach(VictorUart& victorUart, Camera& camera, std::string object)
 
 bool Approach::execute()
 {
-	if(m_camera.getDetections(m_object))
+	if(m_camera.getDetection(m_object).has_value())
 	{
 		raspberryIf::MoveTracksMessage moveTracksMessage;
 	    moveTracksMessage.leftTrackSpeed = 50;

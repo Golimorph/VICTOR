@@ -20,10 +20,16 @@ from detection_pipeline import GStreamerDetectionApp
 # -----------------------------------------------------------------------------------------------
 host = 'localhost'
 port = 8081
+object = "None" #The object to detect, will be sent from C++ program.
 socketToCppProgram = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 socketToCppProgram.connect((host, port))
 def send_detection(detection):
     socketToCppProgram.sendall(detection.encode())
+
+def get_object():
+    socketToCppProgram.recv(1024)
+    object = data.decode('utf-8')
+    print("Got an object: {object}\n")
 
 # -----------------------------------------------------------------------------------------------
 # User-defined class to be used in the callback function
@@ -73,8 +79,8 @@ def app_callback(pad, info, user_data):
         bbox = detection.get_bbox()
         confidence = detection.get_confidence()
         if label == "mouse":
-            string_to_print += f"Detection: {label} {confidence:.2f} , {bbox.xmin()}, {bbox.xmax()} \n"
-            send_detection("it was detected!");
+            string_to_print += f"Detection: {label} {confidence:.2f} , {bbox.xmin()}, {bbox.xmax()}, {bbox.ymin()}, {bbox.ymax()} \n"
+            send_detection(string_to_print);
             detection_count += 1
             print(string_to_print)
     if user_data.use_frame:
