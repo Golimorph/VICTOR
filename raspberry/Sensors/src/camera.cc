@@ -3,6 +3,7 @@
 
 Camera::Camera()
 {
+    //Create a socket from the cpp program to the python program
     struct sockaddr_in address;
     int addrlen = sizeof(address);
 
@@ -12,7 +13,6 @@ Camera::Camera()
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
-
     // Forcefully attaching socket to the port 8081
     int opt = 1;
     if (setsockopt(m_server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) 
@@ -30,10 +30,14 @@ Camera::Camera()
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
+
     if (listen(m_server_fd, 3) < 0) {
         perror("listen");
         exit(EXIT_FAILURE);
     }
+
+    startHailo();
+
     if ((m_socket = accept(m_server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0)
     {
         perror("accept");
@@ -42,6 +46,26 @@ Camera::Camera()
 
 }
 
+
+void Camera::startHailo()
+{
+    m_hailoThread = std::thread(&Camera::runHailo, this);
+}
+
+void Camera::runHailo()
+{
+    std::cerr << "Raspberry: launching Hailo\n";
+    const char* command = R"(
+        bash -c '
+        cd /home/victor/Repository/Python &&
+        source setup_env.sh &&
+        python detection.py --input /dev/video0 > /dev/null 2>&1')"; 
+    if (std::system(command) != 0) {
+        std::cerr << "Raspberrypi: Error starting Hailo." << std::endl;
+    }
+}
+
+    
 
 
 bool Camera::getDetections(std::string object) 

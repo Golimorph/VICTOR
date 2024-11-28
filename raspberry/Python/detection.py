@@ -76,6 +76,7 @@ def app_callback(pad, info, user_data):
             string_to_print += f"Detection: {label} {confidence:.2f} , {bbox.xmin()}, {bbox.xmax()} \n"
             send_detection("it was detected!");
             detection_count += 1
+            print(string_to_print)
     if user_data.use_frame:
         # Note: using imshow will not work here, as the callback function is not running in the main thread
         # Let's print the detection count to the frame
@@ -87,7 +88,6 @@ def app_callback(pad, info, user_data):
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         user_data.set_frame(frame)
 
-    print(string_to_print)
     return Gst.PadProbeReturn.OK
 
 if __name__ == "__main__":

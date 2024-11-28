@@ -47,9 +47,9 @@ To build, upload and monitor serial:
 To format code:
  	cstyle 
 Check status on victor:
-	sudo systemctl start victorProgram.service
-	sudo systemctl status victorProgram.service
-	sudo journalctl -u victorProgram.service -f
+	stop = sudo systemctl stop victorProgram.service
+	start = sudo systemctl status victorProgram.service
+	log = sudo journalctl -u victorProgram.service -f
 
 
 

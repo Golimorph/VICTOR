@@ -253,7 +253,7 @@ void VictorUart::send(std::vector<uint8_t> message)
 {
     for(uint8_t &byte : message)
     {
-        std::cerr << static_cast<int>(byte) << ", ";
+        //std::cerr << "Raspberry sending UART message: "<< static_cast<int>(byte) << ", ";
         sendByte(byte);
     }
     std::cerr << "\n";

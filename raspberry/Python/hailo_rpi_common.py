@@ -314,13 +314,14 @@ def DISPLAY_PIPELINE(video_sink='xvimagesink', sync='true', show_fps='false', na
         str: A string representing the GStreamer pipeline for displaying the video.
     """
     # Construct the display pipeline string
+    #Golimorph, I changed "video-sink={video_sink}" to "video-sink=fakesink"
     display_pipeline = (
         f'{QUEUE(name=f"{name}_hailooverlay_q")} ! '
         f'hailooverlay name={name}_hailooverlay ! '
         f'{QUEUE(name=f"{name}_videoconvert_q")} ! '
         f'videoconvert name={name}_videoconvert n-threads=2 qos=false ! '
         f'{QUEUE(name=f"{name}_q")} ! '
-        f'fpsdisplaysink name={name} video-sink={video_sink} sync={sync} text-overlay={show_fps} signal-fps-measurements=true '
+        f'fpsdisplaysink name={name} video-sink=fakesink sync={sync} text-overlay={show_fps} signal-fps-measurements=true '
     )
 
     return display_pipeline
