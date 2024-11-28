@@ -20,14 +20,15 @@ public:
     explicit Camera();
 
     //The properties of a detected object. Location and type.
-	struct ObjectProperties {
-		std::string type;
-		double probability;
-		double xmin;
-		double xmax;
-		double ymin;
-		double ymax;
-	};
+    struct ObjectProperties
+    {
+        std::string type;
+        double probability;
+        double xmin;
+        double xmax;
+        double ymin;
+        double ymax;
+    };
 
     /*! Get the position of the first object of a certain type currently detected by the camera
      * @param object, what object to look for

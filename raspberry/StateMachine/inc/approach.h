@@ -20,6 +20,8 @@ public:
     void abort();
 
 private:
+    clampToInt8(int value);
+
     VictorUart& m_victorUart;
     Camera& m_camera;
     std::string m_object;

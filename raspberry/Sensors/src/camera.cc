@@ -107,12 +107,12 @@ std::optional<Camera::ObjectProperties> Camera::getDetection(std::string object)
 {
 	//TODO make it so that object is sent to the python program and the c++ program will wait for the returned message from the callback.
 	
-    write(m_socket, object.c_str(), object.size());//Tell Hailo what object I want to detect.
+    //write(m_socket, object.c_str(), object.size());//Tell Hailo what object I want to detect.
     char buffer[1024] = {0};
     int valread = read(m_socket, buffer, 1024);
     if (valread > 0) 
     {
-        std::cerr << "Raspberry: Received message from Hailo: " << buffer << std::endl;
+        //mstd::cerr << "Raspberry: Received message from Hailo: " << buffer << std::endl;
         return parseObjectProperties(buffer); //object found.
     }
     return std::nullopt; //object not found

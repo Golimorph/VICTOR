@@ -20,16 +20,16 @@ from detection_pipeline import GStreamerDetectionApp
 # -----------------------------------------------------------------------------------------------
 host = 'localhost'
 port = 8081
-object = "None" #The object to detect, will be sent from C++ program.
+object_to_detect = "None" #The object to detect, will be sent from C++ program.
 socketToCppProgram = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 socketToCppProgram.connect((host, port))
 def send_detection(detection):
     socketToCppProgram.sendall(detection.encode())
 
-def get_object():
-    socketToCppProgram.recv(1024)
-    object = data.decode('utf-8')
-    print("Got an object: {object}\n")
+def get_object_to_detect():
+    data = socketToCppProgram.recv(1024)
+    object_to_detect = data.decode('utf-8')
+    print("Got an object: {object_to_detect}\n")
 
 # -----------------------------------------------------------------------------------------------
 # User-defined class to be used in the callback function
@@ -55,19 +55,6 @@ def app_callback(pad, info, user_data):
     if buffer is None:
         return Gst.PadProbeReturn.OK
 
-    # Using the user_data to count the number of frames
-    user_data.increment()
-    string_to_print = f"Frame count: {user_data.get_count()}\n"
-
-    # Get the caps from the pad
-    format, width, height = get_caps_from_pad(pad)
-
-    # If the user_data.use_frame is set to True, we can get the video frame from the buffer
-    frame = None
-    if user_data.use_frame and format is not None and width is not None and height is not None:
-        # Get video frame
-        frame = get_numpy_from_buffer(buffer, format, width, height)
-
     # Get the detections from the buffer
     roi = hailo.get_roi_from_buffer(buffer)
     detections = roi.get_objects_typed(hailo.HAILO_DETECTION)
@@ -78,26 +65,16 @@ def app_callback(pad, info, user_data):
         label = detection.get_label()
         bbox = detection.get_bbox()
         confidence = detection.get_confidence()
-        if label == "mouse":
-            string_to_print += f"Detection: {label} {confidence:.2f} , {bbox.xmin()}, {bbox.xmax()}, {bbox.ymin()}, {bbox.ymax()} \n"
-            send_detection(string_to_print);
+        if label == "bottle":
+            string_to_send = f"{label} {confidence:.2f} , {bbox.xmin()}, {bbox.xmax()}, {bbox.ymin()}, {bbox.ymax()} \n"
+            send_detection(string_to_send);
             detection_count += 1
-            print(string_to_print)
-    if user_data.use_frame:
-        # Note: using imshow will not work here, as the callback function is not running in the main thread
-        # Let's print the detection count to the frame
-        cv2.putText(frame, f"Detections: {detection_count}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        # Example of how to use the new_variable and new_function from the user_data
-        # Let's print the new_variable and the result of the new_function to the frame
-        cv2.putText(frame, f"{user_data.new_function()} {user_data.new_variable}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        # Convert the frame to BGR
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        user_data.set_frame(frame)
 
     return Gst.PadProbeReturn.OK
 
 if __name__ == "__main__":
     # Create an instance of the user app callback class
+    #get_object_to_detect()
     user_data = user_app_callback_class()
     app = GStreamerDetectionApp(app_callback, user_data)
     app.run()
