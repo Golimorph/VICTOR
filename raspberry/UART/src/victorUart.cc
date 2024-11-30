@@ -7,9 +7,10 @@
 #include <chrono>
 #include <thread>
 
-VictorUart::VictorUart(const std::string& portName) 
+VictorUart::VictorUart(const std::string& portName)
 {
-    m_messageStringEnumMap = {
+    m_messageStringEnumMap =
+    {
         {"MoveTracksMessage", raspberryIf::RaspberryMessageType::MOVE_TRACKS_MESSAGE},
         {"MoveArmMessage", raspberryIf::RaspberryMessageType::MOVE_ARM_MESSAGE},
         {"MoveClawMessage", raspberryIf::RaspberryMessageType::MOVE_CLAW_MESSAGE},
@@ -17,7 +18,7 @@ VictorUart::VictorUart(const std::string& portName)
     };
 
     fd = open(portName.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
-    if (fd == -1) 
+    if (fd == -1)
     {
         std::cerr << "Unable to open port " << portName << std::endl;
         exit(1);
@@ -36,7 +37,7 @@ VictorUart::~VictorUart()
     close(fd);
 }
 
-void VictorUart::configurePort() 
+void VictorUart::configurePort()
 {
     termios options;
     tcgetattr(fd, &options);
@@ -56,21 +57,25 @@ void VictorUart::configurePort()
     tcsetattr(fd, TCSANOW, &options);
 }
 
-void VictorUart::sendByte(uint8_t byte) 
+void VictorUart::sendByte(uint8_t byte)
 {
     write(fd, &byte, sizeof(byte));
 }
 
-std::string VictorUart::readLine() 
+std::string VictorUart::readLine()
 {
     std::string result;
     char buffer[1];
-    while (true) {
+    while (true)
+    {
         int n = read(fd, buffer, 1);
-        if (n > 0) {
+        if (n > 0)
+        {
             if (buffer[0] == '\n') break;
             result += buffer[0];
-        } else {
+        }
+        else
+        {
             break;
         }
     }
@@ -79,11 +84,12 @@ std::string VictorUart::readLine()
 
 void VictorUart::printToConsoleLoop()
 {
-    while (true) 
+    while (true)
     {
         // Read the response
         std::string response = readLine();
-        if (!response.empty()) {
+        if (!response.empty())
+        {
             std::cerr << "Arduino: " << response << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
@@ -96,7 +102,7 @@ void VictorUart::startPrintToConsole()
 }
 
 
-raspberryIf::RaspberryMessageType VictorUart::extractMessageName(const std::string& input) 
+raspberryIf::RaspberryMessageType VictorUart::extractMessageName(const std::string& input)
 {
     size_t pos = input.find('(');//can assume to always work since string is kotlin-data-class toString output.
     std::string messageName = input.substr(0, pos);
@@ -104,42 +110,52 @@ raspberryIf::RaspberryMessageType VictorUart::extractMessageName(const std::stri
 
     if(m_messageStringEnumMap.find(messageName) == m_messageStringEnumMap.end())
     {
-        return raspberryIf::RaspberryMessageType::NO_MESSAGE;    
+        return raspberryIf::RaspberryMessageType::NO_MESSAGE;
     }
 
     return m_messageStringEnumMap.at(messageName);
-   
+
 }
 
-std::vector<int8_t> VictorUart::extractMessageData(const std::string& input) {
+std::vector<int8_t> VictorUart::extractMessageData(const std::string& input)
+{
 
     std::vector<int8_t> numbers;
     size_t pos = 0;
-    while ((pos = input.find('=', pos)) != std::string::npos) 
+    while ((pos = input.find('=', pos)) != std::string::npos)
     {
         pos++;
         // Check if the next character is a digit or a '-' for negative numbers
-        if (pos < input.length() && (isdigit(input[pos]) || input[pos] == '-')) {
-            try {
+        if (pos < input.length() && (isdigit(input[pos]) || input[pos] == '-'))
+        {
+            try
+            {
                 size_t numEnd;
                 int num = std::stoi(input.substr(pos), &numEnd);
-                if (num < -128 || num > 127) {
+                if (num < -128 || num > 127)
+                {
                     // Skip invalid 8-bit integer values
                     pos += numEnd;
                     continue;
                 }
                 numbers.push_back(static_cast<int8_t>(num));
                 pos += numEnd;
-            } catch (const std::invalid_argument& e) {
+            }
+            catch (const std::invalid_argument& e)
+            {
                 // Handle the case where stoi could not convert to an integer
                 std::cerr << "Invalid argument: " << e.what() << std::endl;
                 pos = input.find_first_not_of("-0123456789", pos);
-            } catch (const std::out_of_range& e) {
+            }
+            catch (const std::out_of_range& e)
+            {
                 // Handle the case where the number is out of range
                 std::cerr << "Out of range: " << e.what() << std::endl;
                 pos = input.find_first_not_of("-0123456789", pos);
             }
-        } else {
+        }
+        else
+        {
             pos = input.find_first_not_of("-0123456789", pos);
         }
     }
@@ -151,7 +167,7 @@ bool VictorUart::handleMessage(std::string message)
 {
     auto messageType = extractMessageName(message);
     auto messageData = extractMessageData(message);
-    
+
     if(messageType == raspberryIf::RaspberryMessageType::MOVE_TRACKS_MESSAGE)
     {
         auto moveTracksMessage = raspberryIf::createMessage<raspberryIf::MoveTracksMessage>(messageData);
@@ -176,7 +192,7 @@ bool VictorUart::handleMessage(std::string message)
     {
         std::cerr << "Raspberry: Received unknown message: " << message <<"\n";
         return false;
-    }   
+    }
 }
 
 bool VictorUart::doMoveTracks(raspberryIf::MoveTracksMessage moveTracksMessage)
@@ -188,7 +204,7 @@ bool VictorUart::doMoveTracks(raspberryIf::MoveTracksMessage moveTracksMessage)
 
 bool VictorUart::doMoveArm(raspberryIf::MoveArmMessage moveArmMessage)
 {
-    
+
     double x = static_cast<double>(static_cast<int8_t>(moveArmMessage.xcm))*10 + static_cast<double>(static_cast<int8_t>(moveArmMessage.xmm));
     double y = static_cast<double>(static_cast<int8_t>(moveArmMessage.ycm))*10 + static_cast<double>(static_cast<int8_t>(moveArmMessage.ymm));
     double z = static_cast<double>(static_cast<int8_t>(moveArmMessage.zcm))*10 + static_cast<double>(static_cast<int8_t>(moveArmMessage.zmm));

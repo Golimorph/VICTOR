@@ -3,7 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 
-InverseKinematics::InverseKinematics() 
+InverseKinematics::InverseKinematics()
 {
     static const double arrDesiredValue[] = {0.0,200.44642857142844,93.30357142857139,90.0,0.0,0.0};
     m_desiredValue = std::vector<double>(arrDesiredValue, arrDesiredValue + sizeof(arrDesiredValue) / sizeof(arrDesiredValue[0]));
@@ -11,14 +11,15 @@ InverseKinematics::InverseKinematics()
     static const double arrLastSolution[] = {5.3114119748707385*M_PI/180, -61.86945005577265*M_PI/180, 81.18333507151557*M_PI/180, 74.29993641341093*M_PI/180, 20.003997714471623*M_PI/180, -75.20435410139946*M_PI/180};
     m_lastSolution = std::vector<double>(arrLastSolution, arrLastSolution + sizeof(arrLastSolution) / sizeof(arrLastSolution[0]));
 
-    static const double arrLimits[] = {
+    static const double arrLimits[] =
+    {
         -70*M_PI/180,  70*M_PI/180,
-        -70*M_PI/180, 130*M_PI/180,
-        -30*M_PI/180,  90*M_PI/180,
-        -M_PI/2*(100/90), M_PI/2*(100/90),
-        -M_PI/2     ,     M_PI/2,
-        -M_PI/2     ,     M_PI/2
-    };
+            -70*M_PI/180, 130*M_PI/180,
+            -30*M_PI/180,  90*M_PI/180,
+            -M_PI/2*(100/90), M_PI/2*(100/90),
+            -M_PI/2,     M_PI/2,
+            -M_PI/2,     M_PI/2
+        };
     m_limits = std::vector<double>(arrLimits, arrLimits + sizeof(arrLimits) / sizeof(arrLimits[0]));
 
     std::vector<double> solution0;
@@ -188,9 +189,9 @@ void InverseKinematics::convertToDegrees(std::vector<double>& varsRadians)
 }
 
 
-bool InverseKinematics::solve(const std::vector<double>& desiredValue, std::vector<double>& solution) 
+bool InverseKinematics::solve(const std::vector<double>& desiredValue, std::vector<double>& solution)
 {
-    //The desired values is set in a local variable 
+    //The desired values is set in a local variable
     //so that it can be accessed during the solve procedure in other member methods
     m_desiredValue = convertDesiredValuesToRadians(desiredValue);
 
@@ -214,14 +215,14 @@ bool InverseKinematics::solve(const std::vector<double>& desiredValue, std::vect
     }
 
     //Provide the last solution as answer to the caller if unable to find a solution, and use this as next guess.
-    solution = m_lastSolution; 
+    solution = m_lastSolution;
     convertToDegrees(solution);
     return false;
 }
 
 
 //help method for newtonRaphsonSolver, puts all angles between -M_PI and M_PI
-void InverseKinematics::normalize(std::vector<double> &solution) 
+void InverseKinematics::normalize(std::vector<double> &solution)
 {
     for(int i = 0; i < solution.size(); ++i)
     {
@@ -243,20 +244,20 @@ bool InverseKinematics::isValid(const std::vector<double>& solution)
     return true;
 }
 
-bool InverseKinematics::solveForGuess(std::vector<double>& solution, const std::vector<double> guess) 
+bool InverseKinematics::solveForGuess(std::vector<double>& solution, const std::vector<double> guess)
 {
     std::vector<double> vars = guess;
     std::vector<double> f(6);
     std::vector<std::vector<double> > J(6, std::vector<double>(6));
 
-    for (int iter = 0; iter < max_iterations; ++iter) 
+    for (int iter = 0; iter < max_iterations; ++iter)
     {
         compute_functions(vars, f);
         compute_jacobian(vars, J);
 
         std::vector<double> delta = solve_system(J, f);
 
-        for (size_t i = 0; i < vars.size(); ++i) 
+        for (size_t i = 0; i < vars.size(); ++i)
         {
             vars[i] -= delta[i];
         }
@@ -267,7 +268,7 @@ bool InverseKinematics::solveForGuess(std::vector<double>& solution, const std::
             norm += f.at(i) * f.at(i);
         }
 
-        if (std::sqrt(norm) < epsilon) 
+        if (std::sqrt(norm) < epsilon)
         {
             normalize(vars);
             if(!isValid(vars))
@@ -281,12 +282,13 @@ bool InverseKinematics::solveForGuess(std::vector<double>& solution, const std::
     return false;
 }
 
-void InverseKinematics::compute_jacobian(const std::vector<double>& vars, std::vector<std::vector<double> >& J) 
+void InverseKinematics::compute_jacobian(const std::vector<double>& vars, std::vector<std::vector<double> >& J)
 {
     double h = 1e-8;
     std::vector<double> f1(6), f2(6);
 
-    for (size_t i = 0; i < vars.size(); ++i) {
+    for (size_t i = 0; i < vars.size(); ++i)
+    {
         std::vector<double> vars1 = vars;
         std::vector<double> vars2 = vars;
         vars1[i] += h;
@@ -295,28 +297,33 @@ void InverseKinematics::compute_jacobian(const std::vector<double>& vars, std::v
         compute_functions(vars1, f1);
         compute_functions(vars2, f2);
 
-        for (size_t j = 0; j < 6; ++j) {
+        for (size_t j = 0; j < 6; ++j)
+        {
             J[j][i] = (f1[j] - f2[j]) / (2 * h);
         }
     }
 }
 
-std::vector<double> InverseKinematics::solve_system(const std::vector<std::vector<double> >& J, const std::vector<double>& funcs) 
+std::vector<double> InverseKinematics::solve_system(const std::vector<std::vector<double> >& J, const std::vector<double>& funcs)
 {
     int n = funcs.size();
     std::vector<double> x(n, 0.0);
     std::vector<std::vector<double> > A = J;
     std::vector<double> b = funcs;
 
-    for (int i = 0; i < n; ++i) {
+    for (int i = 0; i < n; ++i)
+    {
         A[i][i] -= b[i];
     }
 
     // Gaussian elimination
-    for (int i = 0; i < n; ++i) {
-        for (int j = i + 1; j < n; ++j) {
+    for (int i = 0; i < n; ++i)
+    {
+        for (int j = i + 1; j < n; ++j)
+        {
             double factor = A[j][i] / A[i][i];
-            for (int k = i; k < n; ++k) {
+            for (int k = i; k < n; ++k)
+            {
                 A[j][k] -= factor * A[i][k];
             }
             b[j] -= factor * b[i];
@@ -324,9 +331,11 @@ std::vector<double> InverseKinematics::solve_system(const std::vector<std::vecto
     }
 
     // Back substitution
-    for (int i = n - 1; i >= 0; --i) {
+    for (int i = n - 1; i >= 0; --i)
+    {
         x[i] = b[i] / A[i][i];
-        for (int j = i - 1; j >= 0; --j) {
+        for (int j = i - 1; j >= 0; --j)
+        {
             b[j] -= A[j][i] * x[i];
         }
     }
@@ -334,11 +343,11 @@ std::vector<double> InverseKinematics::solve_system(const std::vector<std::vecto
     return x;
 }
 
-void InverseKinematics::compute_functions(const std::vector<double>& vars, std::vector<double>& funcs) 
+void InverseKinematics::compute_functions(const std::vector<double>& vars, std::vector<double>& funcs)
 {
     const double a = vars[0];
     const double b = vars[1];
-    const double c = vars[2]; 
+    const double c = vars[2];
     const double d = vars[3];
     const double e = vars[4];
     const double f = vars[5];
@@ -363,7 +372,7 @@ void InverseKinematics::compute_functions(const std::vector<double>& vars, std::
     x =  A1*_a;
     y =  A1*__a;
     z =  A2;
-    
+
     x +=  B*(_b*_a);
     y +=  B*(_b*__a);
     z +=  B*(__b);

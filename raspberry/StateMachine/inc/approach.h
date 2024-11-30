@@ -20,7 +20,7 @@ public:
     void abort();
 
 private:
-    clampToInt8(int value);
+    int8_t clampToInt8(int value);
 
     VictorUart& m_victorUart;
     Camera& m_camera;

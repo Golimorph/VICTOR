@@ -3,7 +3,7 @@
 SoftI2c::SoftI2c(uint8_t sdaPin, uint8_t sclPin)
     : wire(sdaPin, sclPin) {}
 
-void SoftI2c::begin() 
+void SoftI2c::begin()
 {
     // SoftWire doesn't support slave mode directly, so this is just an initialization
     wire.begin();
@@ -11,18 +11,18 @@ void SoftI2c::begin()
     Serial.println("SoftWire I2C Initialized");
 }
 
-void SoftI2c::checkForData() 
+void SoftI2c::checkForData()
 {
     // Poll for incoming I2C data
-    if (wire.available()) 
+    if (wire.available())
     {
         receiveEvent(wire.available());
     }
 }
 
-void SoftI2c::receiveEvent(int bytes) 
+void SoftI2c::receiveEvent(int bytes)
 {
-    while (bytes-- > 0) 
+    while (bytes-- > 0)
     {
         char c = wire.read();
         Serial.print("Received: ");

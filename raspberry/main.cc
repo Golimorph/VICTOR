@@ -10,7 +10,7 @@
 
 
 
-int main() 
+int main()
 {
     std::cerr<<"raspberry: started\n";
     VictorUart victorUart("/dev/ttyUSB0");
@@ -18,7 +18,7 @@ int main()
     Camera camera;//Camera interface to the Hailo python API.
 
     raspberryIf::MoveArmMessage moveArmMessage;
-    moveArmMessage.xcm = 0; 
+    moveArmMessage.xcm = 0;
     moveArmMessage.xmm = 0;
     moveArmMessage.ycm = 20;
     moveArmMessage.ymm = 0;
@@ -28,8 +28,8 @@ int main()
 
     StateMachine stateMachine(victorUart, camera);
     stateMachine.start();
-    
-    
+
+
     VictorServer victorServer(std::bind(&VictorUart::handleMessage, &victorUart, std::placeholders::_1));
     victorServer.startI2Cforwarding();//blocking
 
