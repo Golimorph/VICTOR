@@ -60,7 +60,10 @@ void Camera::runHailo()
         bash -c '
         cd /home/victor/Repository/Python &&
         source setup_env.sh &&
-        python detection.py --input /dev/video0 > /dev/null 2>&1')"; //python detection.py --labels-json resources/barcode-labels.json --hef resources/yolov8s-hailo8l-barcode.hef --input /dev/video0 > /dev/null 2>&1
+        python detection.py --labels-json barcode-labels.json --hef barcode.hef -i rpi > /dev/null 2>&1')"; 
+    //python detection.py --labels-json resources/barcode-labels.json --hef resources/yolov8s-hailo8l-barcode.hef --input /dev/video0 > /dev/null 2>&1    
+    //python detection.py --input /dev/video0 > /dev/null 2>&1
+
     if (std::system(command) != 0)
     {
         ERROR("Raspberrypi: Error starting Hailo.");
@@ -127,7 +130,7 @@ std::optional<Camera::ObjectProperties> Camera::getDetection(std::string object)
     int valread = read(m_socket, buffer, 1024);
     if (valread > 0)
     {
-        //mstd::cerr << "Raspberry: Received message from Hailo: " << buffer << std::endl;
+        //std::cerr << "Raspberry: Received message from Hailo: " << buffer << std::endl;
         return parseObjectProperties(buffer); //object found.
     }
     return std::nullopt; //object not found

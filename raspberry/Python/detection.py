@@ -65,7 +65,7 @@ def app_callback(pad, info, user_data):
         label = detection.get_label()
         bbox = detection.get_bbox()
         confidence = detection.get_confidence()
-        if label == "bottle":
+        if label == "QR code":
             string_to_send = f"{label} {confidence:.2f} , {bbox.xmin()}, {bbox.xmax()}, {bbox.ymin()}, {bbox.ymax()} \n"
             send_detection(string_to_send);
             detection_count += 1
