@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <chrono>
 #include <iomanip>
@@ -12,7 +13,7 @@ inline int activeTraceGroups = 0;  // Bitmask for trace groups
 inline auto lastPrintTime = std::chrono::steady_clock::now();
 
 // Function to get current time in 24-hour format as a string
-std::string currentTime()
+inline std::string currentTime()
 {
     auto now = std::chrono::system_clock::now();
     std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
@@ -24,7 +25,7 @@ std::string currentTime()
 }
 
 // Function to calculate and return the elapsed time since last print
-double elapsedTimeSinceLastPrint()
+inline double elapsedTimeSinceLastPrint()
 {
     auto now = std::chrono::steady_clock::now();
     double elapsed = std::chrono::duration<double>(now - lastPrintTime).count();
@@ -35,6 +36,16 @@ double elapsedTimeSinceLastPrint()
 // INFO Macro: Prints message with time and elapsed time
 #define INFO(msg) \
         std::cerr << "[INFO] " << traceUtil::currentTime() << " (" << std::fixed << std::setprecision(3) \
+                  << traceUtil::elapsedTimeSinceLastPrint() << "s since last) (" << __FILE__ << ":" << __LINE__ << "): " << msg << std::endl
+
+// INFO Macro: Prints message with time and elapsed time
+#define WARNING(msg) \
+        std::cerr << "[WARNING] " << traceUtil::currentTime() << " (" << std::fixed << std::setprecision(3) \
+                  << traceUtil::elapsedTimeSinceLastPrint() << "s since last) (" << __FILE__ << ":" << __LINE__ << "): " << msg << std::endl
+
+// INFO Macro: Prints message with time and elapsed time
+#define ARDUINO_INFO(msg) \
+        std::cerr << "[ARDUINO] " << traceUtil::currentTime() << " (" << std::fixed << std::setprecision(3) \
                   << traceUtil::elapsedTimeSinceLastPrint() << "s since last) (" << __FILE__ << ":" << __LINE__ << "): " << msg << std::endl
 
 // ERROR Macro: Prints message, then terminates the program
@@ -54,4 +65,3 @@ double elapsedTimeSinceLastPrint()
             } \
         } while (0)
 }
-

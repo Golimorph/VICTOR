@@ -10,6 +10,7 @@
 #include <thread>
 #include <regex>
 #include <optional>
+#include "trace.h"
 
 /*! @brief The camera class is an intermediary to the Hailo python API and receives messages sent
  * from the code in the python folder. The messages typically contain informaton about objects such

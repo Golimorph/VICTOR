@@ -55,15 +55,15 @@ void Camera::startHailo()
 
 void Camera::runHailo()
 {
-    std::cerr << "Raspberry: launching Hailo\n";
+    INFO("Raspberry: launching Hailo");
     const char* command = R"(
         bash -c '
         cd /home/victor/Repository/Python &&
         source setup_env.sh &&
-        python detection.py --input /dev/video0 > /dev/null 2>&1')";
+        python detection.py --input /dev/video0 > /dev/null 2>&1')"; //python detection.py --labels-json resources/barcode-labels.json --hef resources/yolov8s-hailo8l-barcode.hef --input /dev/video0 > /dev/null 2>&1
     if (std::system(command) != 0)
     {
-        std::cerr << "Raspberrypi: Error starting Hailo." << std::endl;
+        ERROR("Raspberrypi: Error starting Hailo.");
     }
 }
 

@@ -14,6 +14,7 @@
 #include <vector>
 #include "inverseKinematics.h"
 #include <cmath> //std::round
+#include "trace.h"
 
 class VictorUart
 {

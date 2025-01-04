@@ -5,6 +5,7 @@
 #include "stateMachine.h"
 #include "camera.h"
 #include <iostream>
+#include "trace.h"
 
 
 
@@ -12,7 +13,7 @@
 
 int main()
 {
-    std::cerr<<"raspberry: started\n";
+    INFO("raspberry: started");
     VictorUart victorUart("/dev/ttyUSB0");
     victorUart.startPrintToConsole();
     Camera camera;//Camera interface to the Hailo python API.

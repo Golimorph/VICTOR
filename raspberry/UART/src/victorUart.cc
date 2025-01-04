@@ -6,6 +6,7 @@
 #include <cstring>
 #include <chrono>
 #include <thread>
+#include "trace.h"
 
 VictorUart::VictorUart(const std::string& portName)
 {
@@ -90,7 +91,7 @@ void VictorUart::printToConsoleLoop()
         std::string response = readLine();
         if (!response.empty())
         {
-            std::cerr << "Arduino: " << response << std::endl;
+            ARDUINO_INFO(response);
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
@@ -190,7 +191,7 @@ bool VictorUart::handleMessage(std::string message)
     }
     else
     {
-        std::cerr << "Raspberry: Received unknown message: " << message <<"\n";
+        WARNING("Raspberry: Received unknown message: ");
         return false;
     }
 }
@@ -243,6 +244,12 @@ bool VictorUart::doMoveClawAngle(raspberryIf::MoveClawAngleMessage moveClawAngle
     double alpha = static_cast<double>(static_cast<int8_t>(moveClawAngleMessage.alpha));
     double beta = static_cast<double>(static_cast<int8_t>(moveClawAngleMessage.beta));
     double gamma = static_cast<double>(static_cast<int8_t>(moveClawAngleMessage.gamma));
+
+    //origin: alpha = 90, beta = 0, gamma = 0
+
+    //x = 10
+    //y = 240
+    //z = 93
 
     const std::vector<double> desiredValue{m_x,m_y,m_z,alpha,beta,gamma};
     std::vector<double> solution;

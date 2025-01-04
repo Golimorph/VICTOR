@@ -61,14 +61,21 @@ bool Approach::execute()
 	            moveTracksMessage.leftTrackSpeed = 0;
 	            moveTracksMessage.rightTrackSpeed = 0;
 	            m_victorUart.doMoveTracks(moveTracksMessage);
+	            m_victorUart.doMoveTracks(moveTracksMessage);
+	            m_victorUart.doMoveTracks(moveTracksMessage);
+	            m_victorUart.doMoveTracks(moveTracksMessage);
+	            m_victorUart.doMoveTracks(moveTracksMessage);
 	            done = true;
 	        	
 	        }
 
         }
     }
-
-
+    raspberryIf::MoveTracksMessage moveTracksMessage;
+    moveTracksMessage.leftTrackSpeed = 0;
+	moveTracksMessage.rightTrackSpeed = 0;
+    m_victorUart.doMoveTracks(moveTracksMessage);
+    m_victorUart.doMoveTracks(moveTracksMessage);
     return true;
 }
 
