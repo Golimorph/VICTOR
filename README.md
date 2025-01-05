@@ -24,4 +24,9 @@ Check status on victor:
 	sudo systemctl status victorProgram.service
 	sudo journalctl -u victorProgram.service -f
 
+	make start
+	make stop
+	make log
+	make status
+
 

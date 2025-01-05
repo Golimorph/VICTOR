@@ -22,29 +22,29 @@ int8_t Approach::clampToInt8(int value)
 
 bool Approach::execute()
 {
-	bool arrived = false;
-	bool done = false;
+    bool arrived = false;
+    bool done = false;
     while(!done)
     {
 
         auto detection = m_camera.getDetection(m_object);
         if(detection.has_value())
         {
-        	double bottleSize = (detection.value().xmax - detection.value().xmin);
+            double bottleSize = (detection.value().xmax - detection.value().xmin);
 
-        	std::cerr << "In execute: " << detection.value().type << ": " << detection.value().probability <<"\n";
+            std::cerr << "In execute: " << detection.value().type << ": " << detection.value().probability <<"\n";
             int compValue = static_cast<int>(3000*bottleSize*((detection.value().xmin + detection.value().xmax)/2 - 0.5));
             raspberryIf::MoveTracksMessage moveTracksMessage;
             moveTracksMessage.leftTrackSpeed = clampToInt8(10/bottleSize + compValue);
             moveTracksMessage.rightTrackSpeed = clampToInt8(10/bottleSize - compValue);
             m_victorUart.doMoveTracks(moveTracksMessage);
-	      
+
 
         }
     }
     raspberryIf::MoveTracksMessage moveTracksMessage;
     moveTracksMessage.leftTrackSpeed = 0;
-	moveTracksMessage.rightTrackSpeed = 0;
+    moveTracksMessage.rightTrackSpeed = 0;
     m_victorUart.doMoveTracks(moveTracksMessage);
     m_victorUart.doMoveTracks(moveTracksMessage);
     return true;

@@ -41,6 +41,8 @@ public:
     bool doMoveClaw(raspberryIf::MoveClawMessage moveClawMessage);
     /*! @brief preform calculations and send message to arduino for execution */
     bool doMoveClawAngle(raspberryIf::MoveClawAngleMessage moveClawAngleMessage);
+    /*! @brief move the camera and ultrasonic sensor post*/
+    bool doMoveCamera(raspberryIf::MoveCameraMessage moveCameraMessage);
 
 private:
     int fd;

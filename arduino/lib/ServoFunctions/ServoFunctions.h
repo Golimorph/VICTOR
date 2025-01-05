@@ -113,6 +113,11 @@ public:
      * @param time, the time it shall take to complete the move to the new coordinates [ms]*/
     bool moveArm(const double a, const double b, const double c, const double d, const double e, const double f, const int time);
 
+    /*! @brief moves the camera to look in a new direction
+     *  @param xangle left to right movement, 0 means forward
+     *  @param yangle up to down movement, 0 means forward*/
+    bool moveCamera(const int xangle, const int yangle, const int time);
+
     /*! @brief moves a servo from current angle to new angle.
      * This method sets the private variable desiredPWM and the millisecondsPerPWMStep (speed)
      * The method call is non-blocking and the actual servo movement is done by increments
@@ -131,7 +136,7 @@ public:
     int getMotorPosRight();
     int getPWM(int servoNumber);
 
-    /*! @brief perform a simple nodding gesture of the US sensor to show
+    /*! @brief perform a simple nodding gesture of the US/camera sensor to show
      * that initialization succedded, only run this in setup(), as it
      * is a blocking call */
     void indInitCompleted();

@@ -27,6 +27,7 @@
 #define RASPBERRY_SIZE_MOVE_ARM_MESSAGE 7
 #define RASPBERRY_SIZE_MOVE_CLAW_MESSAGE 2
 #define RASPBERRY_SIZE_MOVE_CLAW_ANGLE_MESSAGE 4
+#define RASPBERRY_SIZE_MOVE_CAMERA_MESSAGE 3
 
 namespace raspberryIf
 {
@@ -34,11 +35,12 @@ namespace raspberryIf
 //Remember to update victorUart.h (the message handler in raspberry) if add new messages.
 enum class RaspberryMessageType
 {
-    NO_MESSAGE,
-    MOVE_TRACKS_MESSAGE,
-    MOVE_ARM_MESSAGE,
-    MOVE_CLAW_MESSAGE,
-    MOVE_CLAW_ANGLE_MESSAGE
+    NO_MESSAGE = 0,
+    MOVE_TRACKS_MESSAGE = 1,
+    MOVE_ARM_MESSAGE = 2,
+    MOVE_CLAW_MESSAGE = 3,
+    MOVE_CAMERA_MESSAGE = 4,
+    MOVE_CLAW_ANGLE_MESSAGE = 5
 };
 
 #pragma pack(push, 1) //sets the alignment to 1 byte and saves the current alignment settings
@@ -70,6 +72,12 @@ struct MoveClawAngleMessage
     char alpha;
     char beta;
     char gamma;
+};
+
+struct MoveCameraMessage
+{
+    char xangle;
+    char yangle;
 };
 
 #pragma pack(pop) //restores the previous alignment settings after the struct definitions.

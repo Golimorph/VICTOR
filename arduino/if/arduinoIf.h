@@ -6,7 +6,7 @@
 #define SIZE_MOVE_ARM_MESSAGE 7
 #define SIZE_MOVE_CLAW_MESSAGE 2
 #define SIZE_MOVE_CLAW_ANGLE_MESSAGE 4
-
+#define SIZE_MOVE_CAMERA_MESSAGE 3
 
 /*! @brief interface for communication between victor raspberrypi and victor arduino.
 The interface consist of a number of tasks that victor can performed number in
@@ -36,10 +36,11 @@ namespace arduinoIf
 //Remember to update uart.h,messageHandler.h and victorUart.h if add new messages.
 enum class arduinoMessageType
 {
-    NO_MESSAGE,
-    MOVE_TRACKS_MESSAGE,
-    MOVE_ARM_MESSAGE,
-    MOVE_CLAW_MESSAGE
+    NO_MESSAGE = 0,
+    MOVE_TRACKS_MESSAGE = 1,
+    MOVE_ARM_MESSAGE = 2,
+    MOVE_CLAW_MESSAGE = 3,
+    MOVE_CAMERA_MESSAGE = 4
 };
 
 struct MoveTracksMessage
@@ -63,10 +64,10 @@ struct MoveClawMessage
     char state;//0 or 1, open or closed.
 };
 
-
+struct MoveCameraMessage
+{
+    char xangle;
+    char yangle;
+};
 
 }//namespace arduinoIf
-
-
-
-

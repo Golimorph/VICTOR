@@ -15,7 +15,8 @@ VictorUart::VictorUart(const std::string& portName)
         {"MoveTracksMessage", raspberryIf::RaspberryMessageType::MOVE_TRACKS_MESSAGE},
         {"MoveArmMessage", raspberryIf::RaspberryMessageType::MOVE_ARM_MESSAGE},
         {"MoveClawMessage", raspberryIf::RaspberryMessageType::MOVE_CLAW_MESSAGE},
-        {"MoveClawAngleMessage", raspberryIf::RaspberryMessageType::MOVE_CLAW_ANGLE_MESSAGE}
+        {"MoveClawAngleMessage", raspberryIf::RaspberryMessageType::MOVE_CLAW_ANGLE_MESSAGE},
+        {"MoveCameraMessage", raspberryIf::RaspberryMessageType::MOVE_CAMERA_MESSAGE}
     };
 
     fd = open(portName.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
@@ -189,6 +190,11 @@ bool VictorUart::handleMessage(std::string message)
         auto moveClawAngleMessage = raspberryIf::createMessage<raspberryIf::MoveClawAngleMessage>(messageData);
         return moveClawAngleMessage.has_value() ? doMoveClawAngle(moveClawAngleMessage.value()) : false;
     }
+    else if(messageType == raspberryIf::RaspberryMessageType::MOVE_CAMERA_MESSAGE)
+    {
+        auto moveCameraMessage = raspberryIf::createMessage<raspberryIf::MoveCameraMessage>(messageData);
+        return moveCameraMessage.has_value() ? doMoveCamera(moveCameraMessage.value()) : false;
+    }
     else
     {
         WARNING("Raspberry: Received unknown message: ");
@@ -272,6 +278,13 @@ bool VictorUart::doMoveClawAngle(raspberryIf::MoveClawAngleMessage moveClawAngle
     return true;
 }
 
+bool VictorUart::doMoveCamera(raspberryIf::MoveCameraMessage moveCameraMessage)
+{
+    std::vector<uint8_t> message{static_cast<uint8_t>(raspberryIf::RaspberryMessageType::MOVE_CAMERA_MESSAGE), static_cast<uint8_t>(moveCameraMessage.xangle), static_cast<uint8_t>(moveCameraMessage.yangle)};
+    send(message);
+    return true;
+}
+
 void VictorUart::send(std::vector<uint8_t> message)
 {
     for(uint8_t &byte : message)
@@ -279,5 +292,5 @@ void VictorUart::send(std::vector<uint8_t> message)
         //std::cerr << "Raspberry sending UART message: "<< static_cast<int>(byte) << ", ";
         sendByte(byte);
     }
-    std::cerr << "\n";
+    //std::cerr << "\n";
 }

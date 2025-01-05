@@ -120,6 +120,10 @@ int ServoFunctions::angleToPWM(const int servoNumber, const double angle) const
         return int(angle*2.48 + 0.5) + WRISTTWISTSERVO_MID;
     case CLAWSERVO:
         return int(angle*2.48 + 0.5) + CLAWSERVO_MID;
+    case USERVO_X:
+        return int(angle*2.48 + 0.5) + USERVOMID_X;
+    case USERVO_Y:
+        return int(angle*2.48 + 0.5) + USERVOMID_Y;
     }
 }
 
@@ -222,11 +226,17 @@ bool ServoFunctions::moveArm(const double a, const double b, const double c, con
     return true;
 }
 
+bool ServoFunctions::moveCamera(const int xangle, const int yangle, const int time)
+{
+    moveServo(USERVO_X, xangle, time);
+    moveServo(USERVO_Y, yangle, time);
+    return true;
+}
+
 void ServoFunctions::moveServo(const int servoNumber, const double angle, const int time)
 {
     desiredPWMs[servoNumber] = angleToPWM(servoNumber,angle);
 }
-
 
 void ServoFunctions::refresh()
 {

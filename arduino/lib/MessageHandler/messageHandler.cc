@@ -23,6 +23,9 @@ bool MessageHandler::handleMessage(std::vector<uint8_t> message)
         return handleMoveArmMessage(message);
     case static_cast<uint8_t>(arduinoIf::arduinoMessageType::MOVE_CLAW_MESSAGE):
         return handleMoveClawMessage(message);
+    case static_cast<uint8_t>(arduinoIf::arduinoMessageType::MOVE_CAMERA_MESSAGE):
+        return handleMoveCameraMessage(message);
+
     default:
         return false;
     }
@@ -67,4 +70,14 @@ bool MessageHandler::handleMoveClawMessage(std::vector<uint8_t> message)
         m_sf->moveServo(CLAWSERVO, 40, t);
     }
     return true;
+}
+
+bool MessageHandler::handleMoveCameraMessage(std::vector<uint8_t> message)
+{
+    arduinoIf::MoveCameraMessage moveCameraMessage;
+    moveCameraMessage.xangle = static_cast<int8_t>(message[1]);
+    moveCameraMessage.yangle = static_cast<int8_t>(message[2]);
+
+    const int t = 0; //Time for move [ms].
+    return m_sf->moveCamera(moveCameraMessage.xangle, moveCameraMessage.yangle, t);
 }

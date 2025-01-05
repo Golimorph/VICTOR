@@ -60,8 +60,8 @@ void Camera::runHailo()
         bash -c '
         cd /home/victor/Repository/Python &&
         source setup_env.sh &&
-        python detection.py --labels-json barcode-labels.json --hef barcode.hef -i rpi > /dev/null 2>&1')"; 
-    //python detection.py --labels-json resources/barcode-labels.json --hef resources/yolov8s-hailo8l-barcode.hef --input /dev/video0 > /dev/null 2>&1    
+        python detection.py --labels-json barcode-labels.json --hef barcode.hef -i rpi > /dev/null 2>&1')";
+    //python detection.py --labels-json resources/barcode-labels.json --hef resources/yolov8s-hailo8l-barcode.hef --input /dev/video0 > /dev/null 2>&1
     //python detection.py --input /dev/video0 > /dev/null 2>&1
 
     if (std::system(command) != 0)
