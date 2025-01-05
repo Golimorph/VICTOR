@@ -15,3 +15,6 @@ data class MoveClawMessage(var state: Int) {}
 
 /* Change the angle of the claw. The data is a vector x,y,z of length 125 (normalize needed as Int is not so good) */
 data class MoveClawAngleMessage(val x: Int, val y: Int, val z: Int) {}
+
+/* Change the angle of the camera.*/
+data class MoveCameraMessage(val xangle: Int, val yangle: Int) {}

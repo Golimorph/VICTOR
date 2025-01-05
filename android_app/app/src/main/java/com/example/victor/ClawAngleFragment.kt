@@ -51,6 +51,7 @@ class ClawAngleFragment : Fragment() {
     private fun updateText(){
         binding.textView2.setText("norm = ${_victorState.getClawNorm()}")
         binding.textView.setText("x = ${_victorState.getClawX()}, y = ${_victorState.getClawY()}, z = ${_victorState.getClawZ()}")
+        binding.textView3.setText("ux = ${_victorState.getCameraX()}, uy = ${_victorState.getCameraY()}")
     }
 
     private fun setSeekbarsListeners(){
@@ -65,6 +66,12 @@ class ClawAngleFragment : Fragment() {
         binding.seekBarZ.min = -90
         binding.seekBarZ.progress = _victorState.getClawZ()
         binding.seekBarZ.max = 90
+        binding.seekBarCameraX.min = -90
+        binding.seekBarCameraX.progress = 0
+        binding.seekBarCameraX.max = 90
+        binding.seekBarCameraY.min = -90
+        binding.seekBarCameraY.progress = 0
+        binding.seekBarCameraY.max = 90
 
         binding.seekBarX.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -93,6 +100,24 @@ class ClawAngleFragment : Fragment() {
                 _victorState.setClawZ(progress)
                 binding.seekBarX.progress = _victorState.getClawX()
                 binding.seekBarY.progress = _victorState.getClawY()
+                updateText()
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        binding.seekBarCameraX.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                _victorState.setCameraAngle(progress, _victorState.getCameraY())
+                updateText()
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        binding.seekBarCameraY.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                _victorState.setCameraAngle(_victorState.getCameraX(),progress)
                 updateText()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}

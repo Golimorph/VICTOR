@@ -20,13 +20,21 @@ void setServoInitPos(VictorUart& victorUart)
         moveArmMessage.zcm = 9;
         moveArmMessage.zmm = 3;
         victorUart.doMoveArm(moveArmMessage);
-    }
-    for(int i = 0; i < 10; ++i) //make sure the message gets through
-    {
-        raspberryIf::MoveCameraMessage moveCameraMessage;
-        moveCameraMessage.xangle = 50;
-        moveCameraMessage.yangle = -20;
-        victorUart.doMoveCamera(moveCameraMessage);
+
+        //Top grab:
+        moveArmMessage.xcm = 1;
+        moveArmMessage.xmm = 5;
+        moveArmMessage.ycm = 26;
+        moveArmMessage.ymm = 8;
+        moveArmMessage.zcm = 6;
+        moveArmMessage.zmm = 0;
+        raspberryIf::MoveClawAngleMessage moveClawAngleMessage;
+        moveClawAngleMessage.alpha = 90;
+        moveClawAngleMessage.beta = -4;
+        moveClawAngleMessage.gamma = -90;
+
+        victorUart.doMoveArm(moveArmMessage);
+        victorUart.doMoveClawAngle(moveClawAngleMessage);
     }
 }
 
@@ -35,8 +43,9 @@ int main()
     INFO("raspberry: started");
     VictorUart victorUart("/dev/ttyUSB0");
     victorUart.startPrintToConsole();
-    Camera camera;//Camera interface to the Hailo python API.
     setServoInitPos(victorUart);
+    
+    Camera camera;//Camera interface to the Hailo python API.
     StateMachine stateMachine(victorUart, camera);
     stateMachine.start();
     VictorServer victorServer(std::bind(&VictorUart::handleMessage, &victorUart, std::placeholders::_1));

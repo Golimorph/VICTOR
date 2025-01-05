@@ -121,7 +121,7 @@ int ServoFunctions::angleToPWM(const int servoNumber, const double angle) const
     case CLAWSERVO:
         return int(angle*2.48 + 0.5) + CLAWSERVO_MID;
     case USERVO_X:
-        return int(angle*2.48 + 0.5) + USERVOMID_X;
+        return -int(angle*2.48 + 0.5) + USERVOMID_X;
     case USERVO_Y:
         return int(angle*2.48 + 0.5) + USERVOMID_Y;
     }

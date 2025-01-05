@@ -24,6 +24,8 @@ class VictorState {
     private var _clawZ: Int = 0
     private var _leftTrackSpeed: Int = 0
     private var _rightTrackSpeed: Int = 0
+    private var _xangle: Int = 0 //camera angle
+    private var _yangle: Int = 0 //camera angle
 
     /*This method starts a thread in the scope of this class, which will take the current state of arm and claw and send it to
     * victor every 10ms. For the tracks this is not needed as a moveTrack message can be proceesed quick enough by victor.*/
@@ -123,6 +125,14 @@ class VictorState {
         return _clawZ
     }
 
+    fun getCameraX(): Int {
+        return _xangle
+    }
+
+    fun getCameraY(): Int {
+        return _yangle
+    }
+
     fun setTrackSpeed(leftTrackSpeed: Int, rightTrackSpeed: Int){
         if(leftTrackSpeed == _leftTrackSpeed && rightTrackSpeed == _rightTrackSpeed) {
             return
@@ -131,6 +141,19 @@ class VictorState {
         _rightTrackSpeed = rightTrackSpeed
 
         val message = MoveTracksMessage(leftTrackSpeed, rightTrackSpeed)
+        CoroutineScope(Dispatchers.Main).launch {
+            _victorClient.send(message.toString())
+        }
+    }
+
+    fun setCameraAngle(xangle: Int, yangle: Int){
+        if(xangle == _xangle && yangle == _yangle) {
+            return
+        }
+        _xangle = xangle
+        _yangle = yangle
+
+        val message = MoveCameraMessage(xangle, yangle)
         CoroutineScope(Dispatchers.Main).launch {
             _victorClient.send(message.toString())
         }
